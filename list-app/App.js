@@ -39,7 +39,7 @@ function App() {
       
       try {
         const updateItems = JSON.stringify([...items, newItemObj]);
-        await AsyncStorage.setItem("item", updateItems);
+        await AsyncStorage.setItem("items", updateItems);
         console.log('updatedItems', updateItems)
       } catch (error) {
         console.error("save faild", error);
@@ -51,8 +51,8 @@ function App() {
     setItems(updatedItems)
 
     try {
-      await AsyncStorage.setItem("item", JSON.stringify())
-      console.log('updatedItems', updateItems)
+      await AsyncStorage.setItem("items", JSON.stringify(updatedItems))
+      console.log('updatedItems', updatedItems)
     } catch (error) {
       console.error("save faild", error)
     }
