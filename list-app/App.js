@@ -35,7 +35,7 @@ function App() {
       };
       console.log('출력',newItemObj)
       setItems([...items, newItemObj]);
-      //setItems('')
+      setNewItem('')
       
       try {
         const updateItems = JSON.stringify([...items, newItemObj]);
@@ -46,15 +46,44 @@ function App() {
       }
     }
   }
-  // const deleteItem = async (itemId) =
+  const deleteItem = async (itemId) =>{
+    const updatedItems = items.filter((item)=>item.id !== itemId)
+    setItems(updatedItems)
+
+    try {
+      await AsyncStorage.setItem("item", JSON.stringify())
+      console.log('updatedItems', updateItems)
+    } catch (error) {
+      console.error("save faild", error)
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>토익 암기장, 간단 메모장</Text>
       <TextInput value= {newItem} placeholder='메모를 입력해주세요.'
         style={styles.input} onChangeText={(text)=>setNewItem(text)}></TextInput>
-      <Button title='Save' onPress={addItem} color=''></Button>
+      <Button title='Save' onPress={addItem} color='green'></Button>
+      <FlatList
+       data={items}
+       renderItem={({item})=>(
+        <TouchableOpacity
+        onLongPress={()=>setSelectedItemId(item.id)}>
+          <Text style={styles.item}>{item.text}</Text>
+          {selectedItemId === item.id && (
+            <Button
+              title="Delete"
+              color="red"
+              onPress={()=>{
+                deleteItem(item.id)
+                setSelectedItemId(null)
+              }}></Button>
+          )
+          }
+        </TouchableOpacity>
+      )}>
 
+      </FlatList>
     </View>
   );
 }
