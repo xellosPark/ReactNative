@@ -28,7 +28,6 @@ const LogInView = () => {
             ["refreshToken", refreshToken],
           ]);
           console.log("토큰 저장 성공");
-          Alert.alert("로그인 성공", "토큰이 성공적으로 저장되었습니다.");
         } catch (storageError) {
           console.error("토큰 저장 실패:", storageError);
           Alert.alert("로그인 실패", "토큰 저장 중 문제가 발생했습니다.");

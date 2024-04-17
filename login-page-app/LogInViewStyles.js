@@ -19,7 +19,7 @@ export default StyleSheet.create({
       },
       loginButton: {
         backgroundColor: '#FFE5A4', // 로그인 버튼의 배경색은 연한 분홍색
-        borderRadius: 20, // 버튼의 모서리는 둥글게
+        borderRadius: 10, // 버튼의 모서리는 둥글게
         width: '80%', // 버튼의 너비는 전체의 80%
         padding: 15, // 버튼 내부 패딩
         marginVertical: 10, // 수직 방향 마진
