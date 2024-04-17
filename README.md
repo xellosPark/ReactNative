@@ -47,3 +47,7 @@ react-native-web : RN코드를 웹에서 실행할 수 있게 도와주는 라�
 react-dom : React 애플리케이션을 웹 페이지에 렌더링하는데 필요한 라이브러리
 @expo/webpack-config : Expo 프로젝트에서 Webpack구성을 사용자화하거나 확장할 때 사용되는 유틸리티
 @react-native-async-storage/async-storage : 로컬 디바이스에 데이터를 비동기적으로 저장하고 접근하는데 사용되는 라이브러리. 보통 세션 또는 간단한 데이터를 저장하는데 사용됨
+
+npm install axios
+
+npm install @react-native-async-storage/async-storage
