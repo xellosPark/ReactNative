@@ -17,3 +17,5 @@ npm i @react-native-async-storage/async-storage
 npm install @react-native-async-storage/async-storage
 
 npm install axios
+npm install jwt-decode
+npm install base-64
