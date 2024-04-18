@@ -6,8 +6,8 @@ import StatsCard from './pageUI/StatsCard';
 export default function App() {
   return (
     <>
-      {/* <LogInView/> */}
-      <StatsCard/>
+      <LogInView/>
+      {/* <StatsCard/> */}
     </>
   );
 }
