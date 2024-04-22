@@ -15,3 +15,4 @@ react native splash screen
 npm install react-native-splash-screen
 
 npx react-native start
+npm install @react-native-async-storage/async-storage
