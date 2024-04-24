@@ -20,3 +20,7 @@ npm install @react-navigation/native-stack
 
 하단 탭 탐색기를 사용하려면 @react-navigation/bottom-tabs를 설치해야 합니다.
 npm install @react-navigation/bottom-tabs
+
+
+npm install @react-navigation/native-stack
+npm install @react-navigation/bottom-tabs

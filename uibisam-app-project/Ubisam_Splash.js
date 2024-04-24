@@ -8,7 +8,7 @@ const UbisamSplashScreen = ({ navigation }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
           checkToken();
-        }, 2000);  // Wait for 2 seconds before executing checkToken
+        }, 1000);  // Wait for 2 seconds before executing checkToken
     
         return () => clearTimeout(timer);  // Clear the timer if the component unmounts
       }, []);
@@ -17,14 +17,14 @@ const UbisamSplashScreen = ({ navigation }) => {
     try {
     const token = await AsyncStorage.getItem("userToken");
     if (token) {
-        navigation.replace("Home"); // Use replace to avoid going back to the splash screen
+      navigation.replace("Login");
     } else {
-        navigation.replace("Login");
+      navigation.replace("Ubisam"); 
     }
     } catch (error) {
     console.log("Error checking token:", error);
     } finally {
-      SplashScreen.hide(); // Hide the splash screen after checking the token
+      SplashScreen.hide(); 
     }
   };
 
