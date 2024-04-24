@@ -3,31 +3,64 @@ import { View, Text, StyleSheet } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Config from 'react-native-config';
 
 const UbisamSplashScreen = ({ navigation }) => {
-    useEffect(() => {
-        const timer = setTimeout(() => {
-          checkToken();
-        }, 1000);  // Wait for 2 seconds before executing checkToken
-    
-        return () => clearTimeout(timer);  // Clear the timer if the component unmounts
-      }, []);
-
-  const checkToken = async () => {
-    try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (token) {
-      navigation.replace("Login");
-    } else {
-      navigation.replace("Ubisam"); 
-    }
-    } catch (error) {
-    console.log("Error checking token:", error);
-    } finally {
-      SplashScreen.hide(); 
+  
+  // SplashScreen.hide를 안전하게 호출하기 위한 함수입니다.
+  const hideSplashScreen = () => {
+    if (SplashScreen && SplashScreen.hide) {
+      SplashScreen.hide();
     }
   };
 
+  // 사용자 토큰을 체크하는 함수입니다.
+  const checkToken = async () => {
+
+    console.log('현재 ENV:', Config.ENV);
+
+    try {
+      let token;
+      if (Config.ENV === 'test') {
+        console.log('test');
+        token = true;
+      } else {
+        // 개발 버전
+        token = await AsyncStorage.getItem("userToken");
+        console.log('개발');
+      }
+      
+
+      if (token) {
+        navigation.replace("Login");
+      } else {
+        navigation.replace("Ubisam");
+      }
+    } catch (error) {
+      console.log("Error checking token:", error);
+    } finally {
+      hideSplashScreen(); // SplashScreen.hide()를 여기서 호출합니다.
+    }
+  };
+
+  useEffect(() => {
+    let isComponentMounted = true; // 컴포넌트 마운트 상태를 추적합니다.
+
+    const timer = setTimeout(() => {
+      if (isComponentMounted) {
+        checkToken().catch(error => {
+          // 프로미스가 거부되었을 때 여기서 처리합니다.
+          console.error('Promise was rejected:', error);
+        });
+      }
+    }, 1000); // 1초 후 checkToken 함수를 실행합니다.
+
+    // 컴포넌트 언마운트 시 타이머를 정리하고 isComponentMounted 상태를 업데이트합니다.
+    return () => {
+      isComponentMounted = false;
+      clearTimeout(timer);
+    };
+  }, [navigation]); // 의존성 배열에 navigation 추가
   return (
     <View style={styles.container}>
         <View style={styles.logoStack}>
