@@ -3,7 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Config from 'react-native-config';
+import { ENV_MODE, API_URL  } from '@env';
+import axios from 'axios';
 
 const UbisamSplashScreen = ({ navigation }) => {
   
@@ -16,30 +17,47 @@ const UbisamSplashScreen = ({ navigation }) => {
 
   // 사용자 토큰을 체크하는 함수입니다.
   const checkToken = async () => {
+    // 로그로 환경 모드의 문자열 값을 출력합니다.
+    console.log("Environment Mode (string):", ENV_MODE);
+    console.log("APP_URL :: ", API_URL);
+    // 문자열 값을 불리언으로 변환합니다.
+    const isEnvMode = ENV_MODE === true;
 
-    console.log('현재 ENV:', Config.ENV);
+    // 불리언 값으로 로그를 출력합니다.
+    console.log("Environment Mode (boolean):", isEnvMode); // true 또는 false 불리언 값으로 출력
+
+    const refreshToken = await AsyncStorage.getItem("refreshToken");
+    console.log("accessToken refresh response: 30", refreshToken);
+    let accessToken = null;
+
+    
+    if (refreshToken) {
+      try {
+        const response = await axios.post('http://192.168.0.140:8877/refresh', { refreshToken });
+        accessToken = response.data.accessToken;
+        console.log("accessToken refresh response: 36", accessToken);
+      } catch (error) {
+         if (error.response && error.response.status === 403) {
+          console.log("Received a 403 server -> not refresh token.");
+          accessToken = null;
+        } else {
+          throw error; // Re-throw the error if it's not a 403
+        }
+      }
+    }
 
     try {
-      let token;
-      if (Config.ENV === 'test') {
-        console.log('test');
-        token = true;
-      } else {
-        // 개발 버전
-        token = await AsyncStorage.getItem("userToken");
-        console.log('개발');
-      }
-      
-
-      if (token) {
+      if (!accessToken) {
         navigation.replace("Login");
       } else {
         navigation.replace("Ubisam");
       }
     } catch (error) {
+      // 오류가 발생하면 로그에 오류를 출력합니다.
       console.log("Error checking token:", error);
     } finally {
-      hideSplashScreen(); // SplashScreen.hide()를 여기서 호출합니다.
+      // SplashScreen을 숨깁니다.
+      hideSplashScreen();
     }
   };
 
