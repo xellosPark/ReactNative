@@ -113,5 +113,4 @@ export const bulletinBoardData = [
       date: '7 months ago',
       content: 'Cooking classes now available at the community center. Sign up to learn some gourmet recipes!',
     },
-    // Add more items as needed...
   ];
