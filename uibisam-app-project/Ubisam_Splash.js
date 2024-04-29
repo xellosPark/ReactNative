@@ -33,7 +33,8 @@ const UbisamSplashScreen = ({ navigation }) => {
     
     if (refreshToken) {
       try {
-        const response = await axios.post('http://192.168.0.140:8877/refresh', { refreshToken });
+        const ip = `http://192.168.0.136:8877`;
+        const response = await axios.post(`${ip}/refresh`, { refreshToken });
         accessToken = response.data.accessToken;
         console.log("accessToken refresh response: 36", accessToken);
       } catch (error) {

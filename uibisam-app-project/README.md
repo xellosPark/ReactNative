@@ -12,7 +12,7 @@ npm install react-native-splash-screen
 npm install @react-navigation/native
 npm install react-native-screens react-native-safe-area-context
 npm install @react-navigation/native-stack
-
+npm install @react-navigation/bottom-tabs
 npm install @react-native-async-storage/async-storage
 
 npm install axios
@@ -20,7 +20,6 @@ npm install jwt-decode
 npm install base-64
 
 
-npm install @react-navigation/bottom-tabs
 
 먼저 종속성과 함께 @react-navigation/native 패키지를 설치해야 합니다.
 npm install @react-navigation/native
