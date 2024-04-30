@@ -8,8 +8,8 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       {/* <BulletinBoard /> */}
-      {/* <Board /> */}
-      <MyComponent/>
+      <Board />
+      {/* <MyComponent/> */}
     </SafeAreaView>
   );
 }
