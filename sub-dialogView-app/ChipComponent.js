@@ -3,13 +3,13 @@ import { StyleSheet, View, Text } from "react-native";
 import { Chip } from "react-native-paper";
 
 const ChipComponent = () => {
-  const [selectedChip, setSelectedChip] = useState("전 체");
+  const [selectedChip, setSelectedChip] = useState("대 기");
 
   const chipOptions = [
-    { label: "전 체",  value: "전 체" },
-    { label: "홍길동", value: "홍길동" },
-    { label: "길동이", value: "길동이" },
-    { label: "김철수", value: "김철수" },
+    { label: "대  기", value: "대  기"},
+    { label: "진행중", value: "진행중"},
+    { label: "완  료", value: "완  료"},
+    { label: "이  슈", value: "이  슈"},
   ];
 
   return (
@@ -31,10 +31,10 @@ const ChipComponent = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 12,
+    padding: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    gap: 5,
   },
   chip: {
     

@@ -1,12 +1,18 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Dialog, Portal, Button as PaperButton } from "react-native-paper";
+import ChipComponent from "./ChipComponent";
+import Icon from "react-native-vector-icons/MaterialIcons";
+
 
 const DialogComponent = ({ visible, onDismiss }) => {
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
-        <Dialog.Title>To Do List</Dialog.Title>
+      <Dialog.Title style={styles.title}>
+          To Do List
+          <Icon name="favorite" color="#FF69B4" size={16} />
+        </Dialog.Title>
         <Dialog.Content>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>제목</Text>
@@ -15,9 +21,9 @@ const DialogComponent = ({ visible, onDismiss }) => {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>상태 표시</Text>
             <View style={styles.dropdown}>
-              {/* Implement a custom dropdown UI here */}
-              <Text>대기</Text>
+                <ChipComponent/>
             </View>
+            
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>내용</Text>
@@ -90,6 +96,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
+  },
+  title:{
+    fontWeight: 'bold',
   },
 });
 
