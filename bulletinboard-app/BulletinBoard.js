@@ -6,7 +6,6 @@ const BulletinBoard = () => {
   const [posts, setPosts] = useState([
     { id: '1', title: 'EVENT) 좋은 질문을 콕 집어 알려주는 방법!', date: '3분 전', admin: true, comments: 7 },
     { id: '2', title: '자유 게시판 이용 안내', date: '1시간 전', admin: true, comments: 54 },
-    // ... more posts
   ]);
 
   const renderItem = ({ item }) => (
