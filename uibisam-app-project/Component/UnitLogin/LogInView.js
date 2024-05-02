@@ -6,33 +6,25 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../API/api';
+import Login from './Login';
 
-const LogInView = () => {
+const LogInView = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     if (email && password) {
       try {
-        const ip = `http://192.168.0.136:8877`;
-        const response = await axios.post(`${ip}/login`, {
-          email,
-          password,
-        });
-        const { accessToken, refreshToken } = response.data; // Assuming these are the names used by your server
-
-        //console.log("받은 토큰:", accessToken, refreshToken); // 로그에 토큰 출력
-        // Store both tokens in AsyncStorage
-        try {
-          await AsyncStorage.multiSet([
-            ["accessToken", accessToken],
-            ["refreshToken", refreshToken],
-          ]);
-
-          console.log("토큰 저장 성공");
-        } catch (storageError) {
-          console.error("토큰 저장 실패:", storageError);
+        const result = await Login(email, password);
+        if (result === 'success') {
+          console.log("로그인 성공");
+          navigation.navigate('Ubisam');
+        } else if (result === 'TokenFail') {
           Alert.alert("로그인 실패", "토큰 저장 중 문제가 발생했습니다.");
+          
+        }
+         else {
+          Alert.alert("로그인 실패", "아이디 또는 비밀번호가 맞지 않습니다.");
         }
       } catch (error) {
         console.error("로그인 실패:", error);
