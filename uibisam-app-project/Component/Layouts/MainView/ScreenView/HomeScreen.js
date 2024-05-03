@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MainBoard from '../../../DashBoard/MainBoard';
 import MainBoardData from '../../../DashBoard/MainBoardData';
+import BoardState from '../../../DashBoard/UbStates/BoardState';
 import FloatingButton from '../FloatingButton/FloatingButton';
 
 
@@ -11,12 +12,11 @@ const HomeScreen = () => {
   const handleLoadBoard = async () => {
     const data = await MainBoardData();
       setBoard(data);
-      //console.log("13",{board});
+      console.log("handleLoadBoard 13 ->",{board});
   }
 
   useEffect(() =>{
     handleLoadBoard();
-    
   }, [])
 
   const handleAddPress = () => {
@@ -26,13 +26,13 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-
+    <BoardState />
     <MainBoard board={board} />
-    <FloatingButton
+      <FloatingButton
         onPress={handleAddPress}
         icon="add-outline"
         style={styles.addButton}
-      />
+      /> 
     </View>
   );
 };

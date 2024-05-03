@@ -30,7 +30,7 @@ const MainBoardItem = ({ bordData }) => {
           <View style={styles.row}>
             <View style={styles.contentColumn}>
               <Text style={styles.title}>{item.Title}</Text>
-              <Text numberOfLines={expandedItems.includes(item.id) ? null : 1}>
+              <Text numberOfLines={expandedItems.includes(item.id) ? null : 3}>
                 {item.content}
               </Text>
               {item.content.length > 100 && (

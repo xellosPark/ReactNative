@@ -14,7 +14,8 @@ const LogInView = () => {
   const handleLogin = async () => {
     if (email && password) {
       try {
-        const ip = `http://192.168.0.136:8877`;
+        //const ip = `http://192.168.0.136:8877`;
+        const ip = `http://192.168.0.140:8877`;
         const response = await axios.post(`${ip}/login`, {
           email,
           password,

@@ -29,7 +29,8 @@ function decodeJWT(token) {
 
 // API 사용을 위한 Axios 인스턴스 생성
 const api = axios.create({
-  baseURL: 'http://192.168.0.136:8877', // 실제 API 서버 URL로 조정하세요
+  //baseURL: 'http://192.168.0.136:8877', // 실제 API 서버 URL로 조정하세요
+  baseURL: 'http://192.168.0.140:8877', // 실제 API 서버 URL로 조정하세요
 });
 
 // 요청 인터셉터
@@ -75,8 +76,9 @@ api.interceptors.response.use( response => response, // 에러가 없는 모든 
     const originalRequest = error.config;
     //console.log("오류 발생 76",originalRequest);
     console.log("오류 발생 77");
+    console.log("오류 발생 79 status =  ",  error.response.status, originalRequest._retry);
     if (error.response.status === 403 && !originalRequest._retry) { // 에러가 만료된 토큰 때문이고 요청이 재시도되지 않았다면
-        console.log("오류 발생 78");
+        console.log("오류 발생 81");
       originalRequest._retry = true; // 이 요청을 재시도된 것으로 표시
       console.log("api.interceptors.response.use 28 403 오류");
       return refreshTokenAndRetryRequest(originalRequest); // 토큰을 새로 고치고 원래 요청을 다시 시도하는 함수를 호출
