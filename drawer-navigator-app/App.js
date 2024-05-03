@@ -1,48 +1,37 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createStackNavigator } from '@react-navigation/stack';
 
-function ProjectScreen({ route }) {
+function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>{route.params.name}</Text>
+      <Text>Home Screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => navigation.navigate('Details')}
+      />
     </View>
   );
 }
 
-const Drawer = createDrawerNavigator();
+function DetailsScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+    </View>
+  );
+}
+
+const Stack = createStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Project1">
-        <Drawer.Screen 
-          name="Project1" 
-          component={ProjectScreen} 
-          initialParams={{ name: '프로젝트 1' }} 
-        />
-        <Drawer.Screen 
-          name="Project2" 
-          component={ProjectScreen} 
-          initialParams={{ name: '프로젝트 2' }} 
-        />
-        <Drawer.Screen 
-          name="Project3" 
-          component={ProjectScreen} 
-          initialParams={{ name: '프로젝트 3' }} 
-        />
-        <Drawer.Screen 
-          name="Project4" 
-          component={ProjectScreen} 
-          initialParams={{ name: '프로젝트 4' }} 
-        />
-        <Drawer.Screen 
-          name="Project5" 
-          component={ProjectScreen} 
-          initialParams={{ name: '프로젝트 5' }} 
-        />
-      </Drawer.Navigator>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

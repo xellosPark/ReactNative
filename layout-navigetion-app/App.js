@@ -7,8 +7,7 @@ import MainScreen from './Layouts/MainView/MainScreen';
 export default function App() {
   return (
     <NavigationContainer>
-       {/* <MyTabs /> */}
-
+       {/* <MyTabs />  */}
        <MainScreen/>
       
     </NavigationContainer>
