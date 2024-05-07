@@ -73,11 +73,11 @@ const GoogleLikeCalendar = ({ cellWidth = '14.28%', cellHeight = 100 }) => {
         <TouchableOpacity onPress={() => changeMonth(1)}>
           <Icon name="chevron-forward" size={30} color="#e2e2e2" />
         </TouchableOpacity>
-        {/* <TouchableOpacity >
-          <Icon name="md-filter" size={30} color="#e2e2e2" />
-        </TouchableOpacity> */}
         <TouchableOpacity onPress={() => setCurrentDate(new Date())}>
           <Text style={styles.headerToday}>Today</Text>
+        </TouchableOpacity>
+        <TouchableOpacity >
+          <Icon name="options-outline" size={30} color="#e2e2e2" />
         </TouchableOpacity>
       </View>
       <View style={styles.calendarContainer}>
