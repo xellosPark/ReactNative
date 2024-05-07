@@ -4,20 +4,22 @@ import MainBoard from '../../../DashBoard/MainBoard';
 import MainBoardData from '../../../DashBoard/MainBoardData';
 import BoardState from '../../../DashBoard/UbStates/BoardState';
 import FloatingButton from '../FloatingButton/FloatingButton';
+import ProjectDropdowm from '../ProjectDropdowm/ProjectDropdowm';
 
 
 const HomeScreen = () => {
 
   const [board, setBoard] = useState([]);
+  const [selected, setSelected] = useState('');
   const handleLoadBoard = async () => {
-    const data = await MainBoardData();
+    const data = await MainBoardData(selected);
       setBoard(data);
       console.log("handleLoadBoard 13 ->",{board});
   }
 
   useEffect(() =>{
     handleLoadBoard();
-  }, [])
+  }, [selected])
 
   const handleAddPress = () => {
     alert("Add button pressed!");
@@ -26,8 +28,9 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-    <BoardState />
-    <MainBoard board={board} />
+    <ProjectDropdowm setSelected={setSelected} />
+    <BoardState board={board} />
+    <MainBoard board={board} selected={selected} />
       <FloatingButton
         onPress={handleAddPress}
         icon="add-outline"
@@ -40,7 +43,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   text: {
     fontSize: 18,

@@ -13,16 +13,23 @@ import FloatingButton from "../Layouts/MainView/FloatingButton/FloatingButton";
 
 const ITEMS_PER_PAGE = 5;
 
-const MainBoard = ({ board }) => {
+const MainBoard = ({ board, selected }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState([]);
   const [boardData, setBoard] = useState([]);
   const [changeData, setChangeData] = useState([]);
 
   const [selectedTab, setSelectedTab] = useState('전 체');
-
-  const handleTabSelection = (tab) => {
+  const [tab, setTab] = useState([]);
+  const handleTabSelection = async (tab) => {
+    console.log('tab 클릭 25', tab);
     setSelectedTab(tab);
+    if (tab === '전 체') {
+      console.log('전 체 클릭, ', boardData);
+      await setChangeData(boardData);
+    }
+    else await filterData(tab);
+
   };
 
   const setData = async () => {
@@ -42,7 +49,21 @@ const MainBoard = ({ board }) => {
         status: item?.Status,
       };
     });
-    console.log("data 31", data);
+    //console.log("data 31", data);
+    setBoard(data);
+    await setChangeData(data);
+
+    
+    // 먼저 '전체'를 포함하는 배열 생성
+    const initialTabs = ['전 체'];
+    // 데이터에서 이름 추출 후 중복 제거
+    const naneTab = new Set(data.map(item => item.name));
+    await setTab([...initialTabs, ...naneTab]);
+    
+  };
+
+  const filterData = async (tab) => {
+    const data = boardData.filter(item => item.name === tab );
     await setChangeData(data);
   };
 
@@ -65,9 +86,9 @@ const MainBoard = ({ board }) => {
 
   ////
   return (
-    <View >
-       <View style={styles.tabsContainer}>
-        {['전 체', '홍길동', '길동이', '기 타', '기 타2','기 타3'].map(tab => (
+    <View>
+      <View style={styles.tabsContainer}>
+        {tab.map(tab => (
           <TouchableOpacity
             key={tab}
             style={[
@@ -162,10 +183,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5
   },
   activeTab: {
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: '#FFFFFF',
-    paddingHorizontal: 10, // 좌우 여백 추가로 밑줄 길이 감소
-    marginHorizontal: 10, // 가로 여백 추가로 밑줄 가운데 위치
+    paddingHorizontal: 0, // 좌우 여백 추가로 밑줄 길이 감소
+    marginHorizontal: 5, // 가로 여백 추가로 밑줄 가운데 위치
   },
   tabText: {
     color: '#FFFFFF',
