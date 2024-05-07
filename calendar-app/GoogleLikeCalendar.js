@@ -5,46 +5,62 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const GoogleLikeCalendar = ({ cellWidth = '14.28%', cellHeight = 100 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // Enhanced event structure
   const [events, setEvents] = useState([
-    { date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 7), color: '#CCFFCC', title: 'Event 1' },
-    { date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 7), color: '#CCCCFF', title: 'Event 2' },
-    { date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 7), color: '#CCCCFF', title: 'Event 2' },
-    { date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 7), color: '#CCCCFF', title: 'Event 2' },
-    { date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 7), color: '#CCCCFF', title: 'Event 2' },
-    { date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8), color: '#FFFFCC', title: 'Event 3' },
+    { date: new Date(2024, 4, 7), color: '#CCFFCC', title: 'Event 1' },
+    { date: new Date(2024, 4, 7), color: '#CCCCFF', title: 'Event 2' },
+    { date: new Date(2024, 4, 7), color: '#CCCCFF', title: 'Event 2' },
+    { date: new Date(2024, 4, 7), color: '#CCCCFF', title: 'Event 2' },
+    { date: new Date(2024, 4, 8), color: '#CCCCFF', title: 'Event 2' },
+    { date: new Date(2024, 4, 8), color: '#FFFFCC', title: 'Event 3' },
     // Add more events as needed
   ]);
 
-  // Compute days and the first day of the month directly in the component body
+  // 현재 달의 일수와 첫 번째 요일을 계산합니다.
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
 
-  // Change month
+  // 다음 또는 이전 달로 넘어가는 함수입니다.
   const changeMonth = (n) => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + n));
   };
 
-  // Calculate trailing and leading days
+  // 이전 달의 마지막 일부 날짜를 계산합니다.
   const calculateTrailingDays = () => {
     const daysInLastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
     return Array.from({ length: firstDayOfMonth }, (_, i) => daysInLastMonth - i).reverse();
   };
   const trailingDays = calculateTrailingDays();
+
+  // 다음 달의 시작 일부 날짜를 계산합니다.
   const calculateLeadingDays = () => {
     const totalDisplayedDays = firstDayOfMonth + daysInMonth;
     return Array.from({ length: (7 - totalDisplayedDays % 7) % 7 }, (_, i) => i + 1);
   };
   const leadingDays = calculateLeadingDays();
 
-  // Retrieve events for a specific day
+  // 특정 날짜의 이벤트를 검색합니다.
   const getEventsForDay = (day) => {
     return events.filter(event => event.date.getDate() === day && event.date.getMonth() === currentDate.getMonth());
   };
 
-  // Check if a given day is today
+ // 오늘 날짜인지 확인합니다.
   const isToday = (day) => {
     const today = new Date();
     return today.getDate() === day && today.getMonth() === currentDate.getMonth() && today.getFullYear() === currentDate.getFullYear();
+  };
+
+ // 요일에 따라 색상을 결정합니다. 일요일은 빨간색, 토요일은 파란색으로 표시합니다.
+  const getColorByDay = (day) => {
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const dayOfWeek = date.getDay();
+    
+    if (dayOfWeek === 0) {
+      return 'red'; // 일요일
+    } else if (dayOfWeek === 6) {
+      return 'blue'; // 토요일
+    }
+    return 'black'; // 평일
   };
 
   return (
@@ -57,6 +73,9 @@ const GoogleLikeCalendar = ({ cellWidth = '14.28%', cellHeight = 100 }) => {
         <TouchableOpacity onPress={() => changeMonth(1)}>
           <Icon name="chevron-forward" size={30} color="#e2e2e2" />
         </TouchableOpacity>
+        {/* <TouchableOpacity >
+          <Icon name="md-filter" size={30} color="#e2e2e2" />
+        </TouchableOpacity> */}
         <TouchableOpacity onPress={() => setCurrentDate(new Date())}>
           <Text style={styles.headerToday}>Today</Text>
         </TouchableOpacity>
@@ -68,14 +87,14 @@ const GoogleLikeCalendar = ({ cellWidth = '14.28%', cellHeight = 100 }) => {
           ))}
         </View>
         <View style={styles.daysContainer}>
-          {trailingDays.map(day => (
+          {trailingDays.map((day, index) => (
             <View key={`prev-${day}`} style={[styles.dayCell, { width: cellWidth, height: cellHeight, opacity: 0.5 }]}>
-              <Text style={[styles.dayNumber, { color: 'black' }]}>{day}</Text>
+              <Text style={[styles.dayNumber, { color: index === 0 ? 'red' : index === 6 ? 'blue' : 'black' }]}>{day}</Text>
             </View>
           ))}
           {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => (
             <View key={day} style={[styles.dayCell, { width: cellWidth, height: cellHeight, backgroundColor: isToday(day) ? '#FFF67E' : 'transparent' }]}>
-              <Text style={[styles.dayNumber, { color: 'black' }]}>{day}</Text>
+              <Text style={[styles.dayNumber, { color: getColorByDay(day) }]}>{day}</Text>
               {getEventsForDay(day).slice(0, 2).map((event, index) => (
                 <View key={index} style={[styles.eventLabel, { backgroundColor: event.color }]}>
                   <Text style={styles.eventText}>{event.title}</Text>
@@ -86,9 +105,11 @@ const GoogleLikeCalendar = ({ cellWidth = '14.28%', cellHeight = 100 }) => {
               )}
             </View>
           ))}
-          {leadingDays.map(day => (
+          {leadingDays.map((day, index) => (
             <View key={`next-${day}`} style={[styles.dayCell, { width: cellWidth, height: cellHeight, opacity: 0.5 }]}>
-              <Text style={[styles.dayNumber, { color: 'black' }]}>{day}</Text>
+              <Text style={[styles.dayNumber, {
+                color: index === leadingDays.length - 1 ? 'blue' : 'black'
+              }]}>{day}</Text>
             </View>
           ))}
         </View>
@@ -148,15 +169,15 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   eventLabel: {
-    marginTop: 2,
-    paddingVertical: 2,
-    paddingHorizontal: 4,
-    borderRadius: 4,
-    marginBottom: 2
+    marginTop: 1,
+    paddingVertical: 1,
+    paddingHorizontal: 6,
+    borderRadius: 5,
+    marginBottom: 1
   },
   eventText: {
     color: 'black',
-    fontSize: 12
+    fontSize: 11
   },
   moreEventsText: {
     color: 'grey',
