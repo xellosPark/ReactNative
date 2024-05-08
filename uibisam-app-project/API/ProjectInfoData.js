@@ -2,8 +2,10 @@
 import api from './api';
 
 const ProjectInfoData = async (name) => {
-    const ip = `http://192.168.0.140:8877`;
-
+    //const ip = `http://localhost:3000`;
+    //const ip = `http://192.168.0.140:8877`;
+    //const ip = `http://192.168.0.136:8877`;
+    const ip = `http://14.58.108.70:8877`;
     console.log("MainBoardData ip", ip);
     return await api.get(`${ip}/BoardProject?Name=${encodeURIComponent(name)}`, {
     }, {
@@ -11,7 +13,7 @@ const ProjectInfoData = async (name) => {
             "Content-Type": "application/json",
         }
     }).then(response => {
-        console.log('projectInfo 14',response.status);
+        //console.log('projectInfo 14',response.status);
         if (response.status === 200) {
             // 응답 데이터 전체를 출력
             console.log('response 17');
@@ -23,7 +25,7 @@ const ProjectInfoData = async (name) => {
                 status: item.Status,
                 pm : item.PM
             }));
-            console.log('response 24',newDataRow);
+            //console.log('response 24',newDataRow);
             return newDataRow;
 
         } else if (response.data.code === 403) { //에러메세지 로그 없이 처리하려할때

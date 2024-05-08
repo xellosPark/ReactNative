@@ -12,9 +12,12 @@ const HomeScreen = () => {
   const [board, setBoard] = useState([]);
   const [selected, setSelected] = useState('');
   const handleLoadBoard = async () => {
+    if (selected !== 'No Data') {
     const data = await MainBoardData(selected);
       setBoard(data);
-      console.log("handleLoadBoard 13 ->",{board});
+    } else {
+      console.log(" Select Project 'No Data'");
+    }
   }
 
   useEffect(() =>{

@@ -6,8 +6,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Login = async (email, password) => {
+    //const ip = `http://localhost:3000`;
     //const ip = `http://192.168.0.136:8877`;
-    const ip = `http://192.168.0.140:8877`;
+    //const ip = `http://192.168.0.140:8877`;
+    const ip = `http://14.58.108.70:8877`;
+    
     try {
         const response = await axios.post(`${ip}/login`, {
             email,

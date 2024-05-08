@@ -22,10 +22,8 @@ const MainBoard = ({ board, selected }) => {
   const [selectedTab, setSelectedTab] = useState('전 체');
   const [tab, setTab] = useState([]);
   const handleTabSelection = async (tab) => {
-    console.log('tab 클릭 25', tab);
     setSelectedTab(tab);
     if (tab === '전 체') {
-      console.log('전 체 클릭, ', boardData);
       await setChangeData(boardData);
     }
     else await filterData(tab);
@@ -33,19 +31,16 @@ const MainBoard = ({ board, selected }) => {
   };
 
   const setData = async () => {
-    console.log("setData 17");
     const data = Array.from({ length: board.length }, (_, i) => {
       const item = board[i];
       return {
         id: i + 1,
+        key: i + 1,
         content: item?.Content === undefined ? "" : item.Content,
         date: item?.Date,
         changedate: item?.ChangeDate,
         name: item?.Name,
         title: item?.Title,
-        ToDoList: `${
-          new Date(2024, 3, 22 + i).toISOString().split("T")[0]
-        } - Test ${i + 1}`,
         status: item?.Status,
       };
     });
@@ -69,6 +64,7 @@ const MainBoard = ({ board, selected }) => {
 
   useEffect(() => {
     setData();
+    setSelectedTab('전 체');
   }, [board]);
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -86,7 +82,7 @@ const MainBoard = ({ board, selected }) => {
 
   ////
   return (
-    <View>
+    <View style={styles.parentContainer}>
       <View style={styles.tabsContainer}>
         {tab.map(tab => (
           <TouchableOpacity
@@ -170,6 +166,9 @@ function getStatusColor(status) {
 }
 
 const styles = StyleSheet.create({
+  parentContainer: {
+    flex: 1,
+  },
   tabsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
