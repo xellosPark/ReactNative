@@ -4,11 +4,12 @@ import DayCalendar from './DayCalendar'; // Import the DayCalendar component
 import GoogleLikeCalendar from './GoogleLikeCalendar';
 import ToCalendar from './ToCalendar';
 
+
 const App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* <DayCalendar/> */}
-      <ToCalendar/>
+      {/* <ToCalendar/> */}
       <GoogleLikeCalendar/>
     </SafeAreaView>
   );
