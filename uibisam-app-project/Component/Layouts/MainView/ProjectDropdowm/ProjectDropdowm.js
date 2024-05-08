@@ -19,7 +19,7 @@ const ProjectDropdowm = ({setSelected}) => {
         try {
             const data = await ProjectInfoData('홍길동');
             const prjName = data.map(item => item.text);
-            console.log('prjName 21',prjName);
+            //console.log('prjName 21',prjName);
             setOption(prjName);
         } catch (error) {
             console.error('Failed to fetch project info:', error);

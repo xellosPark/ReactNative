@@ -7,6 +7,9 @@ npm install -g expo-cli
 가상 핸들폰에 실행
 npx expo start
 
+핸드폰에서 실행
+npx expo start --tunnel
+
 npm install react-native-splash-screen
 
 npm install @react-navigation/native

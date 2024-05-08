@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
@@ -11,6 +11,11 @@ const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
     setCurrentPage(page);
     onPageChange(page);
   };
+
+  useEffect(() => {
+    setCurrentPage(1);
+    onPageChange(1);
+  }, [totalItems])
 
   // Function to determine page numbers for pagination
   const paginationGroup = () => {

@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator();
 const MainScreen = () => {
     return (
         <Tab.Navigator tabBar={(props) => <TabBar {...props} />}>
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Board" component={HomeScreen} />
             <Tab.Screen name="Next" component={NextScreen} />
             <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
