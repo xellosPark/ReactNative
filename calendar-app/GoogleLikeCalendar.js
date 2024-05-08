@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SubFilterView from './SubFilterView'; 
+import SubEventView from './SubEventView';
 
 const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  const [selectedDayEvents, setSelectedDayEvents] = useState([]); // 선택된 날짜의 이벤트들을 저장할 상태
+  const [showEventModal, setShowEventModal] = useState(false); // 모달 보이기/숨기기를 제어할 상태
+  
   // Enhanced event structure
   const [events, setEvents] = useState([
     { date: new Date(2024, 4, 7), color: "#CCFFCC", title: "Event 1" },
@@ -97,36 +103,12 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
 
 
   const options = [
-    {
-      label: '전체',
-      color: '#CCFFCC',
-      icon: 'checkmark-circle-outline'
-    },
-    {
-      label: '대기',
-      color: '#CCCCFF',
-      icon: 'time-outline'
-    },
-    {
-      label: '전행중',
-      color: '#FFF67E',
-      icon: 'walk-outline'
-    },
-    {
-      label: '완료',
-      color: '#B7E9F7',
-      icon: 'checkmark-done-outline'
-    },
-    {
-      label: '이슈',
-      color: '#FFC0CB',
-      icon: 'alert-circle-outline'
-    },
-    {
-      label: '알림',
-      color: '#E64F5A',
-      icon: 'alert-circle-outline'
-    }
+    { label: '전체', color: '#CCFFCC', icon: 'checkmark-circle-outline'},
+    { label: '대기', color: '#CCCCFF', icon: 'time-outline'},
+    { label: '전행중', color: '#FFF67E',icon: 'walk-outline'},
+    { label: '완료', color: '#B7E9F7',icon: 'checkmark-done-outline'},
+    { label: '이슈', color: '#FFC0CB',  icon: 'alert-circle-outline'},
+    { label: '알림', color: '#E64F5A', icon: 'alert-circle-outline'}
   ];
 
   const handleConfirm = (selectedOptions) => {
@@ -134,17 +116,28 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
     setDialogVisible(false); // Optionally close the dialog
   };
 
-  const [dialogVisible, setDialogVisible] = useState(false);
-
+  const handleDayClick = (day) => {
+    const dayEvents = getEventsForDay(day);  // 특정 날짜에 대한 이벤트를 가져옵니다.
+    console.log('여기확인', dayEvents);  // 해당 날짜의 이벤트를 콘솔에 로그합니다.
+  
+    // 이벤트가 있는지 확인합니다.
+    if (dayEvents.length > 0) {
+      
+      setSelectedDayEvents(dayEvents); // 선택된 날의 이벤트를 상태로 설정합니다.
+      setShowEventModal(true);         // 이벤트가 있을 경우에만 모달을 표시합니다.
+    } else {
+      console.log('이 날에는 이벤트가 없습니다.'); // 이벤트가 없을 때 로그를 출력할 수 있습니다.
+    }
+  };
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => changeMonth(-1)}>
           <Icon name="chevron-back" size={30} color="#e2e2e2" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{`${currentDate.getFullYear()}년 ${
-          currentDate.getMonth() + 1
-        }월`}</Text>
+        <Text style={styles.headerTitle}>
+          {`${currentDate.getFullYear()}년 ${currentDate.getMonth() + 1}월`}
+        </Text>
         <TouchableOpacity onPress={() => changeMonth(1)}>
           <Icon name="chevron-forward" size={30} color="#e2e2e2" />
         </TouchableOpacity>
@@ -155,84 +148,54 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
           <Icon name="options-outline" size={30} color="#e2e2e2" />
         </TouchableOpacity>
         <SubFilterView
-            visible={dialogVisible}
-            onClose={() => setDialogVisible(false)}
-            onConfirm={handleConfirm} 
-            options={options}
-          />
+          visible={dialogVisible}
+          onClose={() => setDialogVisible(false)}
+          onConfirm={handleConfirm} 
+          options={options}
+        />
+        <SubEventView
+          visible={showEventModal}
+          events={selectedDayEvents}
+          onClose={() => setShowEventModal(false)}
+        />
                 
       </View>
       <View style={styles.calendarContainer}>
         <View style={styles.headerRow}>
           {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
-            <Text
-              key={day}
-              style={[
-                styles.headerCell,
-                {
-                  color: index === 0 ? "red" : index === 6 ? "blue" : "black",
-                },
-              ]}
-            >
+            <Text key={day} style={[styles.headerCell,{color: index === 0 ? "red" : index === 6 ? "blue" : "black",},]}>
               {day}
             </Text>
           ))}
         </View>
-        <View style={styles.daysContainer}>
+        <View style={styles.daysContainer} >
           {trailingDays.map((day, index) => (
-            <View
-              key={`prev-${day}`}
-              style={[
-                styles.dayCell,
-                { width: cellWidth, height: cellHeight, opacity: 0.5 },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.dayNumber,
-                  {
-                    color: index === 0 ? "red" : index === 6 ? "blue" : "black",
-                  },
-                ]}
-              >
+            <View key={`prev-${day}`} style={[ styles.dayCell,{ width: cellWidth, height: cellHeight, opacity: 0.5 },]}>
+              <Text style={[ styles.dayNumber,{color: index === 0 ? "red" : index === 6 ? "blue" : "black",},]}>
                 {day}
               </Text>
             </View>
           ))}
           {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
-            <View
-              key={day}
-              style={[
-                styles.dayCell,
-                {
-                  width: cellWidth,
-                  height: cellHeight,
-                  backgroundColor: isToday(day) ? "#FFF67E" : "transparent",
-                },
-              ]}
+            //<View key={day} style={[styles.dayCell,{width: cellWidth,height: cellHeight,backgroundColor: isToday(day) ? "#FFF67E" : "transparent",},]}>
+            
+            <TouchableOpacity key={day} style={[styles.dayCell,{width: cellWidth,height: cellHeight,backgroundColor: isToday(day) ? "#FFF67E" : "transparent",},]}
+              onPress={() => handleDayClick(day)}  // 다음 달의 날짜 클릭 처리
             >
               <Text style={[styles.dayNumber, { color: getColorByDay(day) }]}>
                 {day}
               </Text>
-              {getEventsForDay(day)
+                {getEventsForDay(day)
                 .slice(0, 2)
                 .map((event, index) => (
-                  <View
-                    key={index}
-                    style={[
-                      styles.eventLabel,
-                      { backgroundColor: event.color },
-                    ]}
-                  >
+                  <View key={index} style={[ styles.eventLabel, { backgroundColor: event.color },]}>
                     <Text style={styles.eventText}>{event.title}</Text>
                   </View>
                 ))}
-              {getEventsForDay(day).length > 2 && (
-                <Text style={styles.moreEventsText}>
-                  + {getEventsForDay(day).length - 2} more
-                </Text>
+                {getEventsForDay(day).length > 2 && (
+                <Text style={styles.moreEventsText}> + {getEventsForDay(day).length - 2} more </Text>
               )}
-            </View>
+            </TouchableOpacity>
           ))}
           {leadingDays.map((day, index) => (
             <View
