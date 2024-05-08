@@ -9,3 +9,4 @@ npx expo start
 
 # Step 1: Install the react-native-calendars package
 npm install react-native-calendars
+npm install --save react-native-vector-icons
