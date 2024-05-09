@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
+import UserContext, { useUserDispatch, useUserState } from '../../../../API/UseContext/userContext';
 
 const SettingsScreen = ({ navigation }) => {
+  const myData = useContext(UserContext);
 
   const OnLogout = async () => {
     try {
@@ -20,6 +22,10 @@ const SettingsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.screenContainer}>
+      <View>
+        <Text>{myData ? myData.id : ''}</Text>
+        <Text>{myData ? myData.name : ''}</Text>
+      </View>
       <Text>Settings Screen</Text>
       <TouchableOpacity style={styles.logOut} onPress={OnLogout}>
            <Text >

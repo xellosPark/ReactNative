@@ -13,7 +13,7 @@ import FloatingButton from "../Layouts/MainView/FloatingButton/FloatingButton";
 
 const ITEMS_PER_PAGE = 5;
 
-const MainBoard = ({ board, selected }) => {
+const MainBoard = ({ board }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState([]);
   const [boardData, setBoard] = useState([]);

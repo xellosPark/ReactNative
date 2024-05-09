@@ -112,13 +112,6 @@ const LogInView = ({ navigation }) => {
         >
           <Text style={styles.logoutButtonText}>LOG OUT</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleTest}
-        >
-          <Text style={styles.logoutButtonText}>Test Button</Text>
-        </TouchableOpacity>
         
         <Text style={styles.forgotPasswordText}>Forgotten Password?</Text>
       </View>

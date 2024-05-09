@@ -3,6 +3,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { jwtDecode } from "jwt-decode";
 import { decode as base64decode } from 'base-64';
+import { TextDecoder } from 'text-encoding';
 
 
 // Decoding function that replaces jwt-decode for React Native
@@ -14,8 +15,13 @@ function decodeJWT(token) {
         }
 
         const header = JSON.parse(base64decode(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
-        const payload = JSON.parse(base64decode(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-
+        //const payload = JSON.parse(base64decode(parts[1].replace(/-/g, '+').replace(/_/g, '/'))); //한글없이는 이렇게 사용가능
+        const payloadEncoded = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const payloadDecoded = base64decode(payloadEncoded);
+        
+        const decoder = new TextDecoder('utf-8');
+        const payloadUtf8 = decoder.decode(new Uint8Array(Array.from(payloadDecoded).map(char => char.charCodeAt(0))));
+        const payload = JSON.parse(payloadUtf8);
         console.log("Decoded Header:", header);
         console.log("Decoded Payload:", payload);
 
