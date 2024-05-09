@@ -50,8 +50,7 @@ const SubFilterView = ({ visible, onClose, onConfirm, options }) => {
             >
               <Icon
                 name={selectedOptions.includes(option.label) ? "checkbox-marked-circle" : "checkbox-blank-circle-outline"}
-                size={24}
-                color="black"
+                size={24} color="black"
               />
               <Text style={styles.optionText}>{option.label}</Text>
             </TouchableOpacity>

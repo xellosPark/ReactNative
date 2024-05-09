@@ -10,17 +10,29 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
 
   const [selectedDayEvents, setSelectedDayEvents] = useState([]); // 선택된 날짜의 이벤트들을 저장할 상태
   const [showEventModal, setShowEventModal] = useState(false); // 모달 보이기/숨기기를 제어할 상태
-  
+  //const [lastTap, setLastTap] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [lastClickedDay, setLastClickedDay] = useState(null); // 마지막 클릭된 날짜를 추적하기 위한 상태
+
   // Enhanced event structure
   const [events, setEvents] = useState([
-    { date: new Date(2024, 4, 7), color: "#CCFFCC", title: "Event 1" },
-    { date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2" },
-    { date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2" },
-    { date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2" },
-    { date: new Date(2024, 4, 8), color: "#CCCCFF", title: "Event 2" },
-    { date: new Date(2024, 4, 8), color: "#FFFFCC", title: "Event 3" },
+    { id: 1, date: new Date(2024, 4, 7), color: "#CCFFCC", title: "Event 1" },
+    { id: 2, date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2" },
+    { id: 3, date: new Date(2024, 4, 7), color: "#FFF67E", title: "Event 2" },
+    { id: 4, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2" },
+    { id: 5, date: new Date(2024, 4, 8), color: "#FFC0CB", title: "Event 2" },
+    { id: 6, date: new Date(2024, 4, 8), color: "#FFFFCC", title: "Event 3" },
     // Add more events as needed
   ]);
+
+  const options = [
+    { label: '전체', color: '#CCFFCC', icon: 'checkmark-circle-outline'},
+    { label: '대기', color: '#CCCCFF', icon: 'time-outline'},
+    { label: '전행중', color: '#FFF67E',icon: 'walk-outline'},
+    { label: '완료', color: '#B7E9F7',icon: 'checkmark-done-outline'},
+    { label: '이슈', color: '#FFC0CB',  icon: 'alert-circle-outline'},
+    { label: '알림', color: '#E64F5A', icon: 'alert-circle-outline'}
+  ];
 
   // 현재 달의 일수와 첫 번째 요일을 계산합니다.
   const daysInMonth = new Date(
@@ -84,51 +96,56 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
     );
   };
 
-  // 요일에 따라 색상을 결정합니다. 일요일은 빨간색, 토요일은 파란색으로 표시합니다.
   const getColorByDay = (day) => {
-    const date = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      day
-    );
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
     const dayOfWeek = date.getDay();
-
-    if (dayOfWeek === 0) {
-      return "red"; // 일요일
-    } else if (dayOfWeek === 6) {
-      return "blue"; // 토요일
-    }
-    return "black"; // 평일
+    return dayOfWeek === 0 ? "red" : dayOfWeek === 6 ? "blue" : "black";
   };
-
-
-  const options = [
-    { label: '전체', color: '#CCFFCC', icon: 'checkmark-circle-outline'},
-    { label: '대기', color: '#CCCCFF', icon: 'time-outline'},
-    { label: '전행중', color: '#FFF67E',icon: 'walk-outline'},
-    { label: '완료', color: '#B7E9F7',icon: 'checkmark-done-outline'},
-    { label: '이슈', color: '#FFC0CB',  icon: 'alert-circle-outline'},
-    { label: '알림', color: '#E64F5A', icon: 'alert-circle-outline'}
-  ];
 
   const handleConfirm = (selectedOptions) => {
     console.log('Selected Options:', selectedOptions);
     setDialogVisible(false); // Optionally close the dialog
   };
 
+    // 더블 클릭 처리 함수
+    const handleDoubleClick = (day) => {
+      const dayEvents = getEventsForDay(day);  // 특정 날짜에 대한 이벤트를 가져옵니다.
+      console.log('여기확인', dayEvents);  // 해당 날짜의 이벤트를 콘솔에 로그합니다.
+    
+      // 이벤트가 있는지 확인합니다.
+      if (dayEvents.length > 0) {
+        setSelectedDayEvents(dayEvents); // 선택된 날의 이벤트를 상태로 설정합니다.
+        setShowEventModal(true);         // 이벤트가 있을 경우에만 모달을 표시합니다.
+      } else {
+        console.log('이 날에는 이벤트가 없습니다.'); // 이벤트가 없을 때 로그를 출력할 수 있습니다.
+      }
+    };
+
   const handleDayClick = (day) => {
-    const dayEvents = getEventsForDay(day);  // 특정 날짜에 대한 이벤트를 가져옵니다.
-    console.log('여기확인', dayEvents);  // 해당 날짜의 이벤트를 콘솔에 로그합니다.
-  
-    // 이벤트가 있는지 확인합니다.
-    if (dayEvents.length > 0) {
-      
-      setSelectedDayEvents(dayEvents); // 선택된 날의 이벤트를 상태로 설정합니다.
-      setShowEventModal(true);         // 이벤트가 있을 경우에만 모달을 표시합니다.
+    // const now = Date.now();
+    // const DOUBLE_PRESS_DELAY = 300; // 밀리세컨드 단위
+
+//     if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
+//       // 이전 클릭 이후 300ms 이내에 클릭이 발생하면 더블 클릭으로 간주합니다.
+//       handleDoubleClick(day);
+//     } else {
+//       // 마지막 클릭 시간을 업데이트합니다.
+// //      setLastTap(now);
+//       setSelectedDay(day); 
+//     }
+
+    // 이전에 클릭된 날짜와 현재 클릭된 날짜가 같은지 확인
+    if (day === lastClickedDay) {
+      // 같은 날짜를 연속해서 클릭하면 더블 클릭으로 간주
+      handleDoubleClick(day);
     } else {
-      console.log('이 날에는 이벤트가 없습니다.'); // 이벤트가 없을 때 로그를 출력할 수 있습니다.
+      // 마지막 클릭된 날짜 업데이트
+      setLastClickedDay(day); // 마지막 클릭된 날짜 저장
+      setSelectedDay(day);    // 현재 클릭된 날짜를 선택된 날짜로 설정
     }
+
   };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.header}>
@@ -178,8 +195,8 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
           ))}
           {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
             //<View key={day} style={[styles.dayCell,{width: cellWidth,height: cellHeight,backgroundColor: isToday(day) ? "#FFF67E" : "transparent",},]}>
-            
-            <TouchableOpacity key={day} style={[styles.dayCell,{width: cellWidth,height: cellHeight,backgroundColor: isToday(day) ? "#FFF67E" : "transparent",},]}
+            <TouchableOpacity key={day} style={[styles.dayCell,{width: cellWidth,height: cellHeight,backgroundColor: isToday(day) ? "#FFF67E" : "transparent",
+              borderColor: selectedDay === day ? 'blue' : 'lightgrey', borderWidth: selectedDay === day ? 1 : 1, },]}
               onPress={() => handleDayClick(day)}  // 다음 달의 날짜 클릭 처리
             >
               <Text style={[styles.dayNumber, { color: getColorByDay(day) }]}>
@@ -219,7 +236,6 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
           ))}
         </View>
       </View>
-      
     </ScrollView>
   );
 };
@@ -288,7 +304,7 @@ const styles = StyleSheet.create({
   },
   eventText: {
     color: 'black',
-    fontSize: 11
+    fontSize: 10
   },
   moreEventsText: {
     color: 'grey',
