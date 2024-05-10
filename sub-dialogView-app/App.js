@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Button, SafeAreaView } from "react-native";
 import DialogComponent from "./DialogComponent"; // Ensure the path is correct
+import ReformListSubModal from "./ReformListSubModal";
 
 const App = () => {
   const [visible, setVisible] = useState(false);
+
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
@@ -11,7 +13,8 @@ const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Button title="Show Dialog" onPress={showDialog} />
-      <DialogComponent visible={visible} onDismiss={hideDialog} />
+      {/* <DialogComponent visible={visible} onDismiss={hideDialog} /> */}
+      <ReformListSubModal visible={visible} onDismiss={hideDialog} />
     </SafeAreaView>
     
   );

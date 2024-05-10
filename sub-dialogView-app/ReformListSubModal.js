@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Modal, ScrollView } from "react-native";
 import ChipComponent from "./ChipComponent";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Picker } from '@react-native-picker/picker';
@@ -15,6 +15,17 @@ const ModalComponent = ({ visible, onDismiss }) => {
   const [requester, setRequester] = useState("");
   const [period, setPeriod] = useState("1일");
 
+  
+  const [events, setEvents] = useState([
+    { id: 1, date: new Date(2024, 4, 7), color: "#CCFFCC", title: "Event 1",content: "2024/05/01 - 내용1"},
+    { id: 2, date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2",content: "2024/05/02 - 내용2"},
+    { id: 3, date: new Date(2024, 4, 7), color: "#FFF67E", title: "Event 2",content: "2024/05/03 - 내용3"},
+    { id: 4, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2",content: "2024/05/04 - 내용4"},
+    { id: 5, date: new Date(2024, 4, 8), color: "#FFC0CB", title: "Event 2",content: "2024/05/05 - 내용5"},
+    { id: 6, date: new Date(2024, 4, 8), color: "#FFFFCC", title: "Event 3",content: "2024/05/06 - 내용6"},
+    
+  ]);
+
   return (
     <Modal
       animationType="slide"
@@ -25,7 +36,7 @@ const ModalComponent = ({ visible, onDismiss }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.title}>
-            To Do List
+            ToDo Edit
             <Icon name="favorite" color="#FF69B4" size={16} />
           </Text>
           <View style={styles.inputContainer}>
@@ -35,35 +46,22 @@ const ModalComponent = ({ visible, onDismiss }) => {
               placeholder="제목을 적어주세요"
             />
           </View>
-          <View style={styles.inputGroup}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>완료 목표 요일</Text>
-              <Picker
-                selectedValue={period}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => setPeriod(itemValue)}
-              >
-                {periodOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-            <View style={styles.inputContainer}>
-            <Text style={styles.label}>요청자 서명</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={setRequester}
-              value={requester}
-              placeholder="이름작성 해주세요!!"
-            />
-            </View>
-          </View>
+          
           <View style={styles.inputContainer}>
             <Text style={styles.label}>상태 표시</Text>
             <View style={styles.dropdown}>
               <ChipComponent />
             </View>
           </View>
+          <Text style={styles.label}>진행 내용</Text>
+          <ScrollView style={styles.scrollView}>
+          {events.map((event) => (
+              <View key={event.id} style={styles.eventContainer}>
+                <Text style={styles.eventContent}>{event.content}</Text>
+                  <View style={styles.underline}></View>
+              </View>
+            ))}
+          </ScrollView>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>내용</Text>
             <TextInput
@@ -166,21 +164,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  inputGroup: {
-    flexDirection: 'row', // 요소들을 가로로 나열
-  },
-  picker: {
-    width: 140,
-  },
-  input: {
-    height:50, // 피커의 높이 설정
-    width: 150,
+  scrollView: {
     borderWidth: 1,
-    borderColor: '#222',
-    padding: 10,
-    borderRadius: 5,
-    
-  }
+    padding: 8,
+    borderRadius: 4,
+    maxHeight: 100,
+  },
+  underline: {
+    height: 1,
+    backgroundColor: "#000",  // Black underline
+    marginBottom: 10,
+  },
 });
 
 export default ModalComponent;

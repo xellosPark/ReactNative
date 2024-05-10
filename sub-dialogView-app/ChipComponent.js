@@ -10,7 +10,6 @@ const ChipComponent = () => {
     { label: "진행중", value: "진행중"},
     { label: "완  료", value: "완  료"},
     { label: "이  슈", value: "이  슈"},
-    { label: "알  림", value: "알  림"},
   ];
 
   return (
@@ -34,11 +33,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     flexWrap: "nowrap",
-    gap: 2,
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    gap: 3,
   },
   chip: {
     backgroundColor: "#C7C8CC",
-    paddingHorizontal: 1,
     borderWidth: 1,
     borderColor: "#D3D3D3",
     borderRadius: 24,
