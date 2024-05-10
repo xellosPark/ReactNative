@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Button, SafeAreaView } from "react-native";
-import { Provider } from "react-native-paper";
 import DialogComponent from "./DialogComponent"; // Ensure the path is correct
 
 const App = () => {
@@ -10,13 +9,11 @@ const App = () => {
   const hideDialog = () => setVisible(false);
 
   return (
-    <Provider>
-      <SafeAreaView style={styles.container}>
-        <Button title="Show Dialog" onPress={showDialog} />
-
-        <DialogComponent visible={visible} onDismiss={hideDialog} />
-      </SafeAreaView>
-    </Provider>
+    <SafeAreaView style={styles.container}>
+      <Button title="Show Dialog" onPress={showDialog} />
+      <DialogComponent visible={visible} onDismiss={hideDialog} />
+    </SafeAreaView>
+    
   );
 };
 

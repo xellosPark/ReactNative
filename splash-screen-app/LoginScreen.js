@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import SplashScreenComponent from './SplashScreen';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
-    // Placeholder login logic
-    if (username === 'admin' && password === 'password') {
-      navigation.navigate('Home');
-    } else {
-      alert('Invalid credentials');
-    }
+    setLoading(true); // Start loading (show splash screen)
+
+    setTimeout(() => {
+      if (username === '1111' && password === '1111') {
+        setLoading(false); // Stop loading
+        navigation.replace('Home');
+      } else {
+        setLoading(false); // Stop loading
+        Alert.alert('Invalid credentials');
+      }
+    }, 2000);  // Delay of 2 seconds
   };
+
+  if (loading) {
+    return <SplashScreenComponent />; 
+  }
 
   return (
     <View style={styles.container}>

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
-import styles from './LogInViewStyles'; 
-import Icon from 'react-native-vector-icons/FontAwesome';
-import axios from 'axios';
-import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from './API/api';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import styles from "./LogInViewStyles";
+import Icon from "react-native-vector-icons/FontAwesome";
+import axios from "axios";
+import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./API/api";
 
 const LogInView = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     if (email && password) {
@@ -49,7 +49,7 @@ const LogInView = () => {
   const handleLogout = async () => {
     try {
       // Clear both tokens from AsyncStorage
-      await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+      await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
       console.log("로그아웃 성공", "토큰이 성공적으로 삭제되었습니다.");
       Alert.alert("로그아웃 성공", "로그아웃이 완료되었습니다.");
     } catch (error) {
@@ -62,10 +62,10 @@ const LogInView = () => {
     try {
       console.log("handleTest start 57");
       const data = await fetchData(); // Call fetchData and handle the data
-      console.log('Use the fetched data here:', data);
+      console.log("Use the fetched data here:", data);
       // Further code to use the fetched data in your application...
     } catch (error) {
-      console.error('Error during data handling in the app:', error);
+      console.error("Error during data handling in the app:", error);
       // Handle errors, e.g., show error message to the user, retry, etc.
     }
   };
@@ -73,18 +73,17 @@ const LogInView = () => {
   const fetchData = async () => {
     try {
       console.log("Attempting to fetch data from protected route...");
-      const response = await api.get('/aaa'); // Make a GET request using the configured Axios instance
-      console.log('Data received:', response.data); // Log the received data
+      const response = await api.get("/aaa"); // Make a GET request using the configured Axios instance
+      console.log("Data received:", response.data); // Log the received data
       return response.data; // Return the data for further processing or UI rendering
     } catch (error) {
-      console.error('Failed to fetch data:', error); // Log the error if the request fails
+      console.error("Failed to fetch data:", error); // Log the error if the request fails
       if (error.response && error.response.status === 403) {
-        console.error('Access Denied. Token may be expired or invalid.');
+        console.error("Access Denied. Token may be expired or invalid.");
       }
       throw error; // Rethrow the error for further handling if necessary
     }
-  }
-  
+  };
 
   return (
     <>
@@ -93,7 +92,7 @@ const LogInView = () => {
           <Text style={[styles.title, styles.titleTo]}>To</Text>
           <Text style={[styles.title, styles.titleDo]}> Do</Text>
           <Text style={[styles.title, styles.titleList]}> List</Text>
-        </View>      
+        </View>
         <View style={styles.logoStack}>
           <Text style={styles.logoU}>U</Text>
           <Text style={styles.logoBi}>bi</Text>
@@ -116,26 +115,17 @@ const LogInView = () => {
           style={styles.input}
           secureTextEntry
         />
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleLogin}
-          >
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>LOG IN</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleLogout}
-        >
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>LOG OUT</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleTest}
-        >
+        <TouchableOpacity style={styles.logoutButton} onPress={handleTest}>
           <Text style={styles.logoutButtonText}>Test Button</Text>
         </TouchableOpacity>
-        
+
         <Text style={styles.forgotPasswordText}>Forgotten Password?</Text>
       </View>
     </>

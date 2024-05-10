@@ -1,51 +1,88 @@
-import React from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import { Dialog, Portal, Button as PaperButton } from "react-native-paper";
+import React, { useState } from "react";
+import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity } from "react-native";
 import ChipComponent from "./ChipComponent";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
+const ModalComponent = ({ visible, onDismiss }) => {
 
-const DialogComponent = ({ visible, onDismiss }) => {
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')} - `;
+
+  // Use state to hold and manage the input value
+  const [dateValue, setDateValue] = useState(formattedDate);
+
   return (
-    <Portal>
-      <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
-      <Dialog.Title style={styles.title}>
-          To Do List
-          <Icon name="favorite" color="#FF69B4" size={16} />
-        </Dialog.Title>
-        <Dialog.Content>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onDismiss} // This is used to handle the hardware back press on Android.
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.title}>
+            To Do List
+            <Icon name="favorite" color="#FF69B4" size={16} />
+          </Text>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>제목</Text>
-            <TextInput style={styles.textInput} placeholder="제목을 적어주세요" />
+            <TextInput
+              style={styles.textInput}
+              placeholder="제목을 적어주세요"
+            />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>상태 표시</Text>
             <View style={styles.dropdown}>
-                <ChipComponent/>
+              <ChipComponent />
             </View>
-            
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>내용</Text>
-            <TextInput style={styles.textArea} multiline />
+            <TextInput
+              style={styles.textArea}
+              multiline={true} // 여러 줄 입력 가능하게 설정
+              value={dateValue}
+              onChangeText={setDateValue}
+              placeholder="YYYY/MM/DD - " // 사용자를 위한 플레이스홀더 텍스트
+              numberOfLines={5} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
+            />
           </View>
-        </Dialog.Content>
-        <Dialog.Actions>
           <View style={styles.buttonContainer}>
-            <PaperButton onPress={onDismiss} style={styles.addButton}>
+            <TouchableOpacity onPress={onDismiss} style={styles.addButton}>
               <Text style={styles.buttonText}>Add</Text>
-            </PaperButton>
-            <PaperButton onPress={onDismiss} style={styles.cancelButton}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onDismiss} style={styles.cancelButton}>
               <Text style={styles.buttonText}>Cancel</Text>
-            </PaperButton>
+            </TouchableOpacity>
           </View>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Semi-transparent background
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
   dialog: {
     width: "90%",
   },
@@ -76,6 +113,8 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 4,
     height: 100,
+    textAlign: 'left',
+    textAlignVertical: 'top',
   },
   buttonContainer: {
     flexDirection: "row",
@@ -84,22 +123,20 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#66A593",
-    color: "white",
-    padding: 1,
+    padding: 8,
     borderRadius: 4,
   },
   cancelButton: {
     backgroundColor: "#CF8083",
-    color: "white",
-    padding: 1,
+    padding: 8,
     borderRadius: 4,
   },
   buttonText: {
     color: "white",
   },
-  title:{
+  title: {
     fontWeight: 'bold',
   },
 });
 
-export default DialogComponent;
+export default ModalComponent;
