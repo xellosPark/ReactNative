@@ -22,6 +22,7 @@ npm install axios
 npm install jwt-decode
 npm install base-64
 npm install text-encoding --save
+npm install react-native-paper
 
 
 먼저 종속성과 함께 @react-navigation/native 패키지를 설치해야 합니다.

@@ -12,10 +12,9 @@ const FloatingButton = ({ onPress, icon = "add-outline", iconSize = 30, iconColo
 
 const styles = StyleSheet.create({
   button: {
-    flex:1,
     backgroundColor: '#F1A3A3',
     borderRadius: 50,
-    padding: 10,
+    padding: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
