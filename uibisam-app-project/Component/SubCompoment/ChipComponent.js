@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Chip } from "react-native-paper";
 
-const ChipComponent = () => {
+const ChipComponent = ({setDropdown}) => {
   const [selectedChip, setSelectedChip] = useState("대 기");
 
   const chipOptions = [
@@ -12,12 +12,16 @@ const ChipComponent = () => {
     { label: "이  슈", value: "이  슈"},
   ];
 
+  const selectDropDown = (item) => {
+    setDropdown(item);
+  };
+
   return (
     <View style={styles.container}>
       {chipOptions.map((chip) => (
         <Chip
           key={chip.value}
-          onPress={() => setSelectedChip(chip.value)}
+          onPress={() =>{ setSelectedChip(chip.value); selectDropDown(chip.value); }}
           style={selectedChip === chip.value ? styles.selectedChip : styles.chip}
         >
           <Text style={selectedChip === chip.value ? styles.selectedChipText : styles.chipText}>
@@ -31,22 +35,26 @@ const ChipComponent = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 1,
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 5,
+    flexWrap: "nowrap",
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    gap: 3,
   },
   chip: {
-    
-    backgroundColor: "#375A7F",
-    color: "white",
+    backgroundColor: "#C7C8CC",
+    borderWidth: 1,
+    borderColor: "#D3D3D3",
+    borderRadius: 24,
   },
   selectedChip: {
-    backgroundColor: "#3498DB",
-    color: "#3498DB",
+    backgroundColor: "#4793AF",
+    borderWidth: 1,
+    borderColor: "#D3D3D3",
+    borderRadius: 24,
   },
   chipText: {
-    color: "white",
+    color: "#4793AF",
     fontWeight: 'bold'
   },
   selectedChipText: {

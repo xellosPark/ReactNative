@@ -174,7 +174,7 @@ const HomeScreen = ({ navigation }) => {
           icon="add-outline"
           style={styles.addButton}
         />
-        <DialogComponent visibleAdd={visibleAdd} onDismiss={hideAddDialog}  />
+        <DialogComponent visibleAdd={visibleAdd} onDismiss={hideAddDialog} name={myData.name} selectProject={selectProject} />
 
         {/* Conditionally render the Edit button */}
         {showEditButton && (
