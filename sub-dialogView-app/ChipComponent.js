@@ -32,22 +32,25 @@ const ChipComponent = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 1,
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 3,
+    flexWrap: "nowrap",
+    gap: 2,
   },
   chip: {
-    
-    backgroundColor: "#375A7F",
-    color: "white",
+    backgroundColor: "#E2E6E9",
+    paddingHorizontal: 1,
+    borderWidth: 1,
+    borderColor: "#D3D3D3",
+    borderRadius: 24,
   },
   selectedChip: {
-    backgroundColor: "#3498DB",
-    color: "#3498DB",
+    backgroundColor: "#4793AF",
+    borderWidth: 1,
+    borderColor: "#D3D3D3",
+    borderRadius: 24,
   },
   chipText: {
-    color: "white",
+    color: "#4793AF",
     fontWeight: 'bold'
   },
   selectedChipText: {

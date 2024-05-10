@@ -135,7 +135,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   title: {
+    fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
