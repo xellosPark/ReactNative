@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Platform,
   ScrollView,
+  Alert
 } from "react-native";
 import Pagination from "./Page/Pagination";
 import FloatingButton from "../Layouts/MainView/FloatingButton/FloatingButton";
 
 const ITEMS_PER_PAGE = 5;
 
-const MainBoard = ({ board }) => {
+const MainBoard = ({ board, toggleEditButton }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState([]);
   const [boardData, setBoard] = useState([]);
@@ -78,6 +79,10 @@ const MainBoard = ({ board }) => {
 
   const handlePageChange = (newPage) => setCurrentPage(newPage);
 
+  const handlePress = (item) => {
+    toggleEditButton(item);
+  };
+
   ////////////////////////////////////////////////////////////
 
   ////
@@ -101,6 +106,7 @@ const MainBoard = ({ board }) => {
         data={currentItems}
         keyExtractor={(item) => `${item.id}`} // 유일한 키 보장
         renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handlePress(item)} activeOpacity={0.7}>
           <View style={styles.row}>
             <View style={styles.contentColumn}>
               <Text style={[styles.title, styles.titleSpacing]}>
@@ -138,6 +144,7 @@ const MainBoard = ({ board }) => {
               </View>
             </View>
           </View>
+          </TouchableOpacity>
         )}
       />
       <Pagination

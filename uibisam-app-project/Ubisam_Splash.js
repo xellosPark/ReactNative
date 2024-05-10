@@ -75,7 +75,7 @@ const UbisamSplashScreen = ({ navigation }) => {
           console.error('Promise was rejected:', error);
         });
       }
-    }, 1000); // 1초 후 checkToken 함수를 실행합니다.
+    }, 500); // 1초 후 checkToken 함수를 실행합니다.
 
     // 컴포넌트 언마운트 시 타이머를 정리하고 isComponentMounted 상태를 업데이트합니다.
     return () => {
@@ -92,7 +92,7 @@ const UbisamSplashScreen = ({ navigation }) => {
             <Text style={styles.logoAm}>am</Text>
             <Icon name="rss" style={styles.rssIcon} />
         </View>
-        <Text>Loading...</Text>
+        <Text>FACTORY AUTOMATION SOLUTIONS</Text>
     </View>
   );
 };
