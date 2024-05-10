@@ -2,21 +2,25 @@ import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity } from "react-native";
 import ChipComponent from "./ChipComponent";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { Picker } from '@react-native-picker/picker';
+
 
 const ModalComponent = ({ visible, onDismiss }) => {
 
   const currentDate = new Date();
   const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')} - `;
-
-  // Use state to hold and manage the input value
+  
   const [dateValue, setDateValue] = useState(formattedDate);
+  const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일","11일","12일","13일","14일","15일"]; 
+  const [requester, setRequester] = useState("");
+  const [period, setPeriod] = useState("1일");
 
   return (
     <Modal
       animationType="slide"
       transparent={true}
       visible={visible}
-      onRequestClose={onDismiss} // This is used to handle the hardware back press on Android.
+      onRequestClose={onDismiss}
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
@@ -30,6 +34,29 @@ const ModalComponent = ({ visible, onDismiss }) => {
               style={styles.textInput}
               placeholder="제목을 적어주세요"
             />
+          </View>
+          <View style={styles.inputGroup}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>완료 목표 요일</Text>
+              <Picker
+                selectedValue={period}
+                style={styles.picker}
+                onValueChange={(itemValue, itemIndex) => setPeriod(itemValue)}
+              >
+                {periodOptions.map((option) => (
+                  <Picker.Item key={option} label={option} value={option} />
+                ))}
+              </Picker>
+            </View>
+            <View style={styles.inputContainer}>
+            <Text style={styles.label}>요청자 서명</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setRequester}
+              value={requester}
+              placeholder="이름작성 해주세요!!"
+            />
+            </View>
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>상태 표시</Text>
@@ -71,7 +98,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: "#EEEE",
     borderRadius: 20,
     padding: 35,
     shadowColor: "#000",
@@ -94,13 +121,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   textInput: {
-    borderColor: "#ccc",
+    borderColor: "#222",
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
   },
   dropdown: {
-    borderColor: "#ccc",
+    borderColor: "#222",
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
@@ -108,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   textArea: {
-    borderColor: "#ccc",
+    borderColor: "#222",
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
@@ -135,10 +162,25 @@ const styles = StyleSheet.create({
     color: "white",
   },
   title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  inputGroup: {
+    flexDirection: 'row', // 요소들을 가로로 나열
+  },
+  picker: {
+    width: 180,
+  },
+  input: {
+    height:50, // 피커의 높이 설정
+    width: 200,
+    borderWidth: 1,
+    borderColor: '#222',
+    padding: 10,
+    borderRadius: 5,
+    
+  }
 });
 
 export default ModalComponent;

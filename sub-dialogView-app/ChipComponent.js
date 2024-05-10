@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   chip: {
-    backgroundColor: "#E2E6E9",
+    backgroundColor: "#C7C8CC",
     paddingHorizontal: 1,
     borderWidth: 1,
     borderColor: "#D3D3D3",
