@@ -11,7 +11,6 @@ const ModalComponent = ({ visible, onDismiss }) => {
   const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')} - `;
   
   const [dateValue, setDateValue] = useState(formattedDate);
-  const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일","11일","12일","13일","14일","15일"]; 
   const [isExpanded, setIsExpanded] = useState(false);
   
   const [events, setEvents] = useState([
