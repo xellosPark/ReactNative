@@ -26,8 +26,8 @@ const MainScreen = () => {
     return (
         <UserProvider value={values}>
         <Tab.Navigator tabBar={(props) => <TabBar {...props} />}>
-            <Tab.Screen name="Board" component={HomeScreen} />
-            <Tab.Screen name="Next" component={NextScreen} />
+            <Tab.Screen name="대시보드" component={HomeScreen} />
+            <Tab.Screen name="유저보드" component={NextScreen} />
             <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
         </UserProvider>

@@ -14,7 +14,8 @@ import UserInfo from '../../../../API/UserInfo';
 
 import UserContext, { useUserDispatch, useUserState } from '../../../../API/UseContext/userContext';
 import ProjectInfoData from '../../../../API/ProjectInfoData';
-import DialogComponent from '../../../SubCompoment/DialogComponent';
+import ModalComponent from '../../../SubCompoment/ModalComponent';
+import ModifyModalComponent from '../../../SubCompoment/ModifyModalComponent';
 
 const HomeScreen = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState([]);
@@ -23,9 +24,9 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [option, setOption] = useState([]);
 
-  const [showEditButton, setShowEditButton] = useState(false); // State to track visibility
+  const [showModifyButton, setShowModifyButton] = useState(false); // State to track visibility
   const [visibleAdd, setVisibleAdd] = useState(false);
-  const [visibleEdit, setVisibleEdit] = useState(false);
+  const [visibleModify, setVisibleModify] = useState(false);
   const [oldClickData, setOldClickData] = useState([]);
 
   const showAddDialog = () => setVisibleAdd(true);
@@ -34,8 +35,11 @@ const HomeScreen = ({ navigation }) => {
     handleLoadBoard();
   }
 
-  const showEditDialog = () => setVisibleEdit(true);
-  const hideEditDialog = () => setVisibleEdit(false);
+  const showModifyDialog = () => setVisibleModify(true);
+  const hideModifyDialog = () => {
+    setVisibleModify(false);
+    handleLoadBoard();
+  };
 
   const myData = useContext(UserContext);
 
@@ -56,10 +60,10 @@ const HomeScreen = ({ navigation }) => {
   }
 
   const handleLoadUserInfo = async () => {
-    if (myData.id === '') {
+    if (myData.id === null) {
       return;
     }
-    if (myData.name === '') {
+    if (myData.name === null) { //'' 이거는 소용 x
       return;
     }
     const data = await UserInfo(myData.id, myData.name);
@@ -107,31 +111,18 @@ const HomeScreen = ({ navigation }) => {
     }
   }
 
-  const handleAddPress = () => {
-    //alert("Add button pressed!");
-    showAddDialog();
-    console.log('진행? 110', visibleAdd);
-
-    console.log('진행? 112', visibleAdd);
-  };
-
-  const handleEditPress = () => {
-    alert("Edit button pressed!");
-  };
-
-  const toggleEditButton = (item) => {
-    console.log('클릭한 내용 제대로 ',item);
+  const toggleModifyButton = (item) => {
+    //console.log('클릭한 내용 제대로 ',item);
     if (item.name !== myData.name) {
-      setShowEditButton(false);
+      setShowModifyButton(false);
       return;
     }
-    //alert(`번호 ${item.id} title ${item.title} content ${item.content}`)
     if (item.key === oldClickData.key) {
-      setShowEditButton(!showEditButton); // Toggle visibility
+      setShowModifyButton(!showModifyButton);// Toggle visibility
     } else {
-      setShowEditButton(true); // Toggle visibility
+      setShowModifyButton(true); // Toggle visibility
     }
-    
+
     setOldClickData(item);
   };
 
@@ -147,7 +138,6 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const loadUserInfo = async () => {
       const userData = await handleLoadUserInfo();
-
     }
     loadUserInfo();
   }, [myData.id, myData.name]);
@@ -160,14 +150,13 @@ const HomeScreen = ({ navigation }) => {
   }, [userInfo])
 
   useEffect(() => {
-
     const loadBoard = async () => {
       await handleLoadBoard();
     }
     loadBoard();
   }, [selectProject])
 
-  const handlePageChange = (newPage) => setCurrentPage(newPage);
+  //onst handlePageChange = (newPage) => setCurrentPage(newPage);
 
   return (
     <Provider>
@@ -176,7 +165,7 @@ const HomeScreen = ({ navigation }) => {
           <>
             <ProjectDropdowm selectProject={selectProject} userInfo={userInfo} option={option} handleOption={handleOption} />
             <BoardState board={board} />
-            <MainBoard board={board} toggleEditButton={toggleEditButton} />
+            <MainBoard board={board} toggleModifyButton={toggleModifyButton} />
           </>
         )}
         <FloatingButton
@@ -184,15 +173,18 @@ const HomeScreen = ({ navigation }) => {
           icon="add-outline"
           style={styles.addButton}
         />
-        <DialogComponent visibleAdd={visibleAdd} onDismiss={hideAddDialog} name={myData.name} selectProject={selectProject} />
+        <ModalComponent visibleAdd={visibleAdd} onDismiss={hideAddDialog} name={myData.name} selectProject={selectProject} />
 
         {/* Conditionally render the Edit button */}
-        {showEditButton && (
+        {showModifyButton && (
+          <>
           <FloatingButton
-            onPress={handleEditPress}
+            onPress={showModifyDialog}
             icon="create-outline"
             style={styles.editButton}
           />
+          <ModifyModalComponent data={oldClickData} name={myData.name} selectProject={selectProject} visibleModify={visibleModify} onDismiss={hideModifyDialog} />
+          </>
         )}
       </SafeAreaView>
     </Provider>
