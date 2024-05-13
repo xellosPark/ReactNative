@@ -1,20 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Chip } from "react-native-paper";
 
-const ChipComponent = ({setDropdown}) => {
-  const [selectedChip, setSelectedChip] = useState("대 기");
+const ChipComponent = ({setStatusVal, statusVal}) => {
+  const [selectedChip, setSelectedChip] = useState("대기");
+  const [status, setstatus] = useState("");
 
+  //console.log('처음', statusVal);
   const chipOptions = [
-    { label: "대  기", value: "대  기"},
+    { label: "대기", value: "대기"},
     { label: "진행중", value: "진행중"},
-    { label: "완  료", value: "완  료"},
-    { label: "이  슈", value: "이  슈"},
+    { label: "완료", value: "완료"},
+    { label: "이슈", value: "이슈"},
   ];
 
   const selectDropDown = (item) => {
-    setDropdown(item);
+    //console.log('dropdown 선택,', item);
+    setStatusVal(item);
   };
+  
+  useEffect(() => {
+    const setChip = async () => {
+      await setSelectedChip(statusVal);
+      //await selectDropDown(statusVal);
+      await setstatus(statusVal);
+    }
+    
+    setChip();
+  }, [statusVal]);
 
   return (
     <View style={styles.container}>

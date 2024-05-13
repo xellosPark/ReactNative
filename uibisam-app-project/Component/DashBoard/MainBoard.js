@@ -14,7 +14,7 @@ import FloatingButton from "../Layouts/MainView/FloatingButton/FloatingButton";
 
 const ITEMS_PER_PAGE = 5;
 
-const MainBoard = ({ board, toggleEditButton }) => {
+const MainBoard = ({ board, toggleModifyButton }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState([]);
   const [boardData, setBoard] = useState([]);
@@ -80,7 +80,7 @@ const MainBoard = ({ board, toggleEditButton }) => {
   const handlePageChange = (newPage) => setCurrentPage(newPage);
 
   const handlePress = (item) => {
-    toggleEditButton(item);
+    toggleModifyButton(item);
   };
 
   ////////////////////////////////////////////////////////////

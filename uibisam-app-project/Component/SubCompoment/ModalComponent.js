@@ -12,12 +12,12 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
   const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')} - `;
   const setDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
   
-  const [dateValue, setDateValue] = useState(formattedDate);
+  const [dataValue, setDataValue] = useState(formattedDate);
   const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일","11일","12일","13일","14일","15일"]; 
   const [title, setTitle] = useState("");
   const [requester, setRequester] = useState("");
   const [period, setPeriod] = useState("1일");
-  const [dropdown, setDropdown] = useState("");
+  const [statusVal, setStatusVal] = useState("");
   
   const handleAdd = async () => {
 
@@ -26,28 +26,28 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
       return;
     }
 
-    if (dropdown === "") {
+    if (statusVal === "") {
       alert('상태를 선택해주세요');
       return;
     }
 
-    if (dateValue === formattedDate) {
+    if (dataValue === formattedDate) {
       alert('내용을 입력해주세요');
       return;
     }
 
-    const cleanDropdown = dropdown.replace(/ /g, '');
+    //const cleanDropdown = dropdown.replace(/ /g, '');
     const item = {
       title: title,
       requester: requester,
       setDate: setDate,
       period: period,
-      cleanDropdown: cleanDropdown,
-      dateValue: dateValue
-  };
-    console.log('handleAdd 24', item);
+      status: statusVal,
+      content: dataValue
+    };
+    //console.log('handleAdd 24', item);
     const result = await AddToDoList(item, name, selectProject);
-    console.log('result', result);
+    //console.log('result', result);
     if (result !== 200) {
       alert('저장에 실패했습니다. 관리자에게 문의해보세요', result);
       return;
@@ -60,11 +60,15 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
     
   };
 
+  const handleCancel = () => {
+    onDismiss();
+  }
+
   const initTodoList = () => {
     setTitle("");
     setRequester("");
-    setDropdown("");
-    setDateValue(formattedDate);
+    setStatusVal("");
+    setDataValue(formattedDate);
   }
 
   return (
@@ -114,7 +118,7 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>상태 표시</Text>
             <View style={styles.dropdown}>
-              <ChipComponent setDropdown={setDropdown} />
+              <ChipComponent setStatusVal={setStatusVal} statusVal={''} />
             </View>
           </View>
           <View style={styles.inputContainer}>
@@ -122,8 +126,8 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
             <TextInput
               style={styles.textArea}
               multiline={true} // 여러 줄 입력 가능하게 설정
-              value={dateValue}
-              onChangeText={setDateValue}
+              value={dataValue}
+              onChangeText={setDataValue}
               placeholder="YYYY/MM/DD - " // 사용자를 위한 플레이스홀더 텍스트
               numberOfLines={5} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
             />
@@ -132,7 +136,7 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
             <TouchableOpacity onPress={handleAdd} style={styles.addButton}>
               <Text style={styles.buttonText}>Add</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onDismiss} style={styles.cancelButton}>
+            <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
