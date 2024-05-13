@@ -26,9 +26,13 @@ const HomeScreen = ({ navigation }) => {
   const [showEditButton, setShowEditButton] = useState(false); // State to track visibility
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
+  const [oldClickData, setOldClickData] = useState([]);
 
   const showAddDialog = () => setVisibleAdd(true);
-  const hideAddDialog = () => setVisibleAdd(false);
+  const hideAddDialog = () => {
+    setVisibleAdd(false);
+    handleLoadBoard();
+  }
 
   const showEditDialog = () => setVisibleEdit(true);
   const hideEditDialog = () => setVisibleEdit(false);
@@ -116,13 +120,19 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const toggleEditButton = (item) => {
-
+    console.log('클릭한 내용 제대로 ',item);
     if (item.name !== myData.name) {
       setShowEditButton(false);
       return;
     }
     //alert(`번호 ${item.id} title ${item.title} content ${item.content}`)
-    setShowEditButton(!showEditButton); // Toggle visibility
+    if (item.key === oldClickData.key) {
+      setShowEditButton(!showEditButton); // Toggle visibility
+    } else {
+      setShowEditButton(true); // Toggle visibility
+    }
+    
+    setOldClickData(item);
   };
 
   useEffect(() => {
@@ -174,7 +184,7 @@ const HomeScreen = ({ navigation }) => {
           icon="add-outline"
           style={styles.addButton}
         />
-        <DialogComponent visibleAdd={visibleAdd} onDismiss={hideAddDialog}  />
+        <DialogComponent visibleAdd={visibleAdd} onDismiss={hideAddDialog} name={myData.name} selectProject={selectProject} />
 
         {/* Conditionally render the Edit button */}
         {showEditButton && (
