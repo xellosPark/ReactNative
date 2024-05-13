@@ -36,7 +36,7 @@ const MainBoard = ({ board, toggleEditButton }) => {
       const item = board[i];
       return {
         id: i + 1,
-        key: i + 1,
+        key: item.Key,
         content: item?.Content === undefined ? "" : item.Content,
         date: item?.Date,
         changedate: item?.ChangeDate,
@@ -104,13 +104,13 @@ const MainBoard = ({ board, toggleEditButton }) => {
       </View>
       <FlatList
         data={currentItems}
-        keyExtractor={(item) => `${item.id}`} // 유일한 키 보장
+        keyExtractor={(item) => `${item.key}`} // 유일한 키 보장 id -> key로 변경(DB와 맞춤)
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePress(item)} activeOpacity={0.7}>
           <View style={styles.row}>
             <View style={styles.contentColumn}>
               <Text style={[styles.title, styles.titleSpacing]}>
-                {`${item.id} | ${
+                {`${item.key} | ${
                   item.title.length > 25 ? item.title.slice(0, 25) + "..." : item.title
                 }`}
               </Text>

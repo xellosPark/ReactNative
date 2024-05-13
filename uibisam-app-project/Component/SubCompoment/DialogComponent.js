@@ -3,13 +3,14 @@ import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity } from "reac
 import ChipComponent from "./ChipComponent";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Picker } from '@react-native-picker/picker';
-import AddTodoList from "../../API/AddToDoList";
+import AddToDoList from "../../API/AddToDoList";
 
 
 const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
 
   const currentDate = new Date();
   const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')} - `;
+  const setDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
   
   const [dateValue, setDateValue] = useState(formattedDate);
   const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일","11일","12일","13일","14일","15일"]; 
@@ -18,18 +19,53 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
   const [period, setPeriod] = useState("1일");
   const [dropdown, setDropdown] = useState("");
   
-  const handleAdd = () => {
+  const handleAdd = async () => {
 
-    const data = [ title, dateValue, requester, period, dropdown ];
-    console.log('handleAdd 24', data);
+    if (title === "") {
+      alert('제목을 입력해주세요');
+      return;
+    }
 
-    //<AddTodoList  name={name} />
+    if (dropdown === "") {
+      alert('상태를 선택해주세요');
+      return;
+    }
 
+    if (dateValue === formattedDate) {
+      alert('내용을 입력해주세요');
+      return;
+    }
 
-    //onDismiss();
+    const cleanDropdown = dropdown.replace(/ /g, '');
+    const item = {
+      title: title,
+      requester: requester,
+      setDate: setDate,
+      period: period,
+      cleanDropdown: cleanDropdown,
+      dateValue: dateValue
+  };
+    console.log('handleAdd 24', item);
+    const result = await AddToDoList(item, name, selectProject);
+    console.log('result', result);
+    if (result !== 200) {
+      alert('저장에 실패했습니다. 관리자에게 문의해보세요', result);
+      return;
+      
+    }
+
+    initTodoList();
+    onDismiss();
+    console.log('닫기완료');
+    
   };
 
-  
+  const initTodoList = () => {
+    setTitle("");
+    setRequester("");
+    setDropdown("");
+    setDateValue(formattedDate);
+  }
 
   return (
     <Modal
@@ -47,7 +83,7 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>제목</Text>
             <TextInput
-              style={styles.textInput}
+              style={styles.textInput} multiline={true} value={title}
               placeholder="제목을 적어주세요"
               onChangeText={setTitle}
             />
