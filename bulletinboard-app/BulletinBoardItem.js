@@ -17,17 +17,13 @@ const BulletinBoardItem = ({ item }) => {
         <Text style={styles.status}>진행중</Text>
       </View>
       <Text style={styles.date}>{item.date}</Text>
-      <Text 
-        style={styles.content} 
-        numberOfLines={isExpanded ? 0 : 2} // Show all lines if expanded, else show 2
-      >
+      <Text style={styles.content} numberOfLines={isExpanded ? 0 : 2} >
         {item.content}
       </Text>
-      {/* "더 보기" (read more) button */}
-      {item.content.length > 100 && ( // Show button if content is long
+      {item.content.length > 100 && ( 
         <TouchableOpacity onPress={toggleNumberOfLines}>
           <Text style={styles.moreButton}>
-            {isExpanded ? '접기' : '더 보기'} {/* "더 보기" for more, "접기" for less */}
+            {isExpanded ? '접기' : '더 보기'} 
           </Text>
         </TouchableOpacity>
       )}

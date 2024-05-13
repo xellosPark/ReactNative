@@ -12,12 +12,10 @@ const ModalComponent = ({ visible, onDismiss }) => {
   
   const [dateValue, setDateValue] = useState(formattedDate);
   const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일","11일","12일","13일","14일","15일"]; 
-  const [requester, setRequester] = useState("");
-  const [period, setPeriod] = useState("1일");
-
+  const [isExpanded, setIsExpanded] = useState(false);
   
   const [events, setEvents] = useState([
-    { id: 1, date: new Date(2024, 4, 7), color: "#CCFFCC", title: "Event 1",content: "2024/05/01 - 내용1"},
+    { id: 1, date: new Date(2024, 4, 7), color: "#CCFFCC", title: "Event 1",content: "2024/05/01 - 내용 12345678901234567890123456789121231233543534521312312321312312321012345678901234567890"},
     { id: 2, date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2",content: "2024/05/02 - 내용2"},
     { id: 3, date: new Date(2024, 4, 7), color: "#FFF67E", title: "Event 2",content: "2024/05/03 - 내용3"},
     { id: 4, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2",content: "2024/05/04 - 내용4"},
@@ -25,6 +23,10 @@ const ModalComponent = ({ visible, onDismiss }) => {
     { id: 6, date: new Date(2024, 4, 8), color: "#FFFFCC", title: "Event 3",content: "2024/05/06 - 내용6"},
     
   ]);
+ 
+  const toggleNumberOfLines = () => {
+    setIsExpanded(!isExpanded); 
+  };
 
   return (
     <Modal
@@ -46,7 +48,7 @@ const ModalComponent = ({ visible, onDismiss }) => {
               placeholder="제목을 적어주세요"
             />
           </View>
-          
+
           <View style={styles.inputContainer}>
             <Text style={styles.label}>상태 표시</Text>
             <View style={styles.dropdown}>
@@ -55,10 +57,18 @@ const ModalComponent = ({ visible, onDismiss }) => {
           </View>
           <Text style={styles.label}>진행 내용</Text>
           <ScrollView style={styles.scrollView}>
-          {events.map((event) => (
+            {events.map((event) => (
               <View key={event.id} style={styles.eventContainer}>
-                <Text style={styles.eventContent}>{event.content}</Text>
-                  <View style={styles.underline}></View>
+                <View style={[ styles.colorIndicator,{ backgroundColor: event.color },]}/>
+                {/* <Text style={styles.eventContent}>{event.content}</Text> */}
+                <Text style={styles.eventContent}numberOfLines={isExpanded ? 0 : 2}>
+                  {event.content}
+                </Text>
+                {event.content.length > 60 && (
+                  <TouchableOpacity onPress={toggleNumberOfLines}>
+                    <Text style={styles.moreButton}>{isExpanded ? "접기🔼" : "더 보기🔽"}</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             ))}
           </ScrollView>
@@ -137,7 +147,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
-    height: 100,
+    height: 150,
     textAlign: 'left',
     textAlignVertical: 'top',
   },
@@ -168,13 +178,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
-    maxHeight: 100,
+    maxHeight: 150,
   },
-  underline: {
-    height: 1,
-    backgroundColor: "#000",  // Black underline
+  colorIndicator: {
+    width: 15,
+    height: 15,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  eventContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
   },
+  eventContent: {
+    flex: 1, 
+    marginRight: 8, 
+  },
+  moreButton: {
+    fontWeight: 'bold',
+    color: '#1E90FF',
+    marginTop: 5,
+  },
+
 });
 
 export default ModalComponent;
