@@ -1,40 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import FlowingText from './FlowingText';
+import TestClient from './TestClient';
 
-const TestClient = () => {
-  const [message, setMessage] = useState('Loading...');
-
-  const fetchData = async () => {
-    try {
-      let response = await fetch('http://14.58.108.70:8877/');
-      let text = await response.text();
-      setMessage(text);
-    } catch (error) {
-      console.error('Error fetching data: ', error);
-      setMessage('Failed to load data');
-    }
-  };
-
+export default function App() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{message}</Text>
-      <Button title="Refresh" onPress={fetchData} />
+      <FlowingText/>
+      {/* <TestClient/> */}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#fff',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  text: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+    justifyContent: 'center',
   },
 });
-
-export default TestClient;

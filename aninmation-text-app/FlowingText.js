@@ -8,27 +8,33 @@ const FlowingText = () => {
   const translateX = useRef(new Animated.Value(screenWidth)).current; // 애니메이션 시작 위치를 화면 너비로 설정합니다.
   const [iconColor, setIconColor] = useState("#E97777"); // 아이콘의 초기 색상을 설정합니다.
 
+    const [events, setEvents] = useState([
+    { id: 1, title: "1.진행 이슈가 있습니다" },
+    { id: 2, title: "2.디버그 이슈가 있습니다" },
+    { id: 3, title: "3.행어 이슈가 있습니다" },
+  ]);
   useEffect(() => {
     const startAnimation = () => {
-      translateX.setValue(screenWidth); // 애니메이션 시작 전 위치를 초기화합니다.
+      // Smoothly reset the translateX value to screenWidth before starting the animation
+      translateX.setValue(screenWidth);
       Animated.timing(translateX, {
-        toValue: -screenWidth * 2,
-        duration: 15000, // 애니메이션 지속 시간을 15초로 설정합니다.
+        toValue: -screenWidth * 2, // Ensure this value provides enough distance for a smooth transition
+        duration: 15000,
         useNativeDriver: true,
-      }).start(() => startAnimation()); // 애니메이션이 끝나면 다시 시작합니다.
+      }).start(() => startAnimation());  // Loop the animation
     };
 
-    startAnimation(); // 컴포넌트 마운트 시 애니메이션을 시작합니다.
+    startAnimation();
 
     const colorInterval = setInterval(() => {
-      setIconColor(prevColor => prevColor === "#E97777" ? "#FFD700" : "#E97777"); // 색상을 주기적으로 토글합니다.
-    }, 1000); // 1초마다 색상을 토글합니다.
+      setIconColor(prevColor => prevColor === "#E97777" ? "#FFD700" : "#E97777");
+    }, 1000); // Toggle the color every second
 
     return () => {
-      translateX.stopAnimation(); // 컴포넌트 언마운트 시 애니메이션을 중지합니다.
-      clearInterval(colorInterval); // 인터벌을 정리합니다.
+      translateX.stopAnimation();
+      clearInterval(colorInterval);
     };
-  }, [translateX]);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -36,9 +42,13 @@ const FlowingText = () => {
         <Icon name="notifications" size={24} color={iconColor} style={styles.icon} />
         <Text style={styles.textissue}>이슈 발생</Text>
         
-        <Text style={styles.text}>1.이슈가 있습니다</Text>
-        <Text style={styles.text}>2.이슈가 있습니다</Text>
+        {events.map((event) => (
+          <Text key={event.id} style={styles.text}>
+            {event.title}
+          </Text>
+        ))}
 
+        <Text style={styles.textissue}>관리자는 빨리 조치 해주세요!</Text>
         
       </Animated.View>
     </View>
@@ -59,14 +69,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 10, // 텍스트 배경의 모서리를 둥글게 처리합니다.
+    marginRight: 10,
   },
   textissue: {
     fontSize: 15,
     fontWeight: 'bold',
-    backgroundColor: '#DDCCFF', // 텍스트의 배경색을 연분홍색으로 설정합니다.
+    backgroundColor: '#D37676', // 텍스트의 배경색을 연분홍색으로 설정합니다.
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 10, // 텍스트 배경의 모서리를 둥글게 처리합니다.
+    borderRadius: 5, // 텍스트 배경의 모서리를 둥글게 처리합니다.
+    marginRight: 10,
   },
   icon: {
     marginLeft: 10, // 아이콘과 텍스트 사이의 간격을 조정합니다.
