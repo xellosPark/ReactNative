@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "ubisam-todolist-app",
+    "slug": "ubisam-todolist-app",
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "e11f465f-87eb-459f-ace9-b6008c8aaff9"
+      }
+    }
+  }
+}
