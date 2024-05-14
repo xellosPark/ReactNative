@@ -20,8 +20,11 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 90 }) => {
     { id: 2, date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2" },
     { id: 3, date: new Date(2024, 4, 7), color: "#FFF67E", title: "Event 2" },
     { id: 4, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2" },
-    { id: 5, date: new Date(2024, 4, 8), color: "#FFC0CB", title: "Event 2" },
-    { id: 6, date: new Date(2024, 4, 8), color: "#FFFFCC", title: "Event 3" },
+    { id: 5, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2" },
+    { id: 6, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2" },
+    { id: 7, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2" },
+    { id: 8, date: new Date(2024, 4, 8), color: "#FFC0CB", title: "Event 2" },
+    { id: 9, date: new Date(2024, 4, 8), color: "#FFFFCC", title: "Event 3" },
     // Add more events as needed
   ]);
 

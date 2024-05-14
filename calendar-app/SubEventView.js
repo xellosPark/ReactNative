@@ -1,38 +1,35 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Modal, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';  // Assuming you have this import set correctly
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';  // Assuming you have this import set correctly
 
 const SubEventView = ({ visible, events, onClose }) => {
-  const [showDetails, setShowDetails] = useState(false); // 상세정보 표시 여부
-  const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 객체
-  const [selectedEventId, setSelectedEventId] = useState(null); // 선택된 이벤트 ID
+  const [showDetails, setShowDetails] = useState(false); // Controls the display of detailed view
+  const [selectedEvent, setSelectedEvent] = useState(null); // Stores the currently selected event
+  const [selectedEventId, setSelectedEventId] = useState(null); // Stores the ID of the selected event
 
-  // 이벤트 선택 핸들러
   const handleEventSelect = (event) => {
-    setSelectedEvent(event); // 선택된 이벤트로 상태 업데이트
-    console.log('ID 상태 13',event.id);
-    setSelectedEventId(event.id); // 선택된 이벤트 ID로 상태 업데이트
-    setShowDetails(true); // 상세정보 보기 활성화
+    setSelectedEvent(event);
+    setSelectedEventId(event.id);
+    setShowDetails(true); // Show details when an event is selected
   };
 
-  // 선택된 이벤트의 상세정보를 렌더링
   const renderDetailsView = () => {
-    if (!selectedEvent) return null; // 선택된 이벤트가 없다면 렌더링하지 않음
+    if (!selectedEvent) return null; // If no event is selected, do not render details
     return (
       <View style={styles.detailsContainer}>
         <View style={styles.textRow}>
           <Text style={styles.labelText}>프로젝트: </Text>
-          <Text style={styles.valueText}> {selectedEvent.title}</Text>
+          <Text style={styles.valueText}>{selectedEvent.title}</Text>
         </View>
         <View style={styles.underline} />
         <View style={styles.textRow}>
           <Text style={styles.labelText}>제목: </Text>
-          <Text style={styles.valueText}> {selectedEvent.title}</Text>
+          <Text style={styles.valueText}>{selectedEvent.title}</Text>
         </View>
         <View style={styles.underline2} />
         <View style={styles.textRow}>
-          <Text style={styles.valueText2}> 밑줄을 결합된 텍스트(레이블 + 값)의 너비와 일치시키려면 컨테이너 스타일을 조정하거나 다른 레이아웃 전략을 사용해야 할 수 있습니다. 밑줄이 여전히 텍스트와 같은 줄에 나타나는 경우 flexDirection: 'row'가 잘못 적용되지 않았는지 또는 스타일이 같은 줄에 강제로 적용되지 않는지 확인하세요. 위와 같이 텍스트 내용과 밑줄을 고유한 보기로 올바르게 분리했는지 확인하세요.</Text>
+          <Text style={styles.valueText2}>밑줄을1231232132u329817489479812798471928471928472419871249922342387983257893572398579028375987253980523798235729835798237598023798523798572398759283759823759825379852372359875239823573525329834578954978789345689745367894368907-34528970439807234690846328094623890-=4632980-=4623890-46328903462890-4362-8906342890-2463-89043690-8540934285093428590324803890580923809580923580923850928309829203859082305982350912984902842091824098241091248120948920840921480239589023850928958239058239085290358092939502830958290385902385902389058239058923085902385908239085093289508239082539082359053829028590238230983509238902385902380958209 결합된 -</Text>
         </View>
       </View>
     );
@@ -53,17 +50,19 @@ const SubEventView = ({ visible, events, onClose }) => {
               <Icon name="close-circle" size={24} color="white" />
             </TouchableOpacity>
           </View>
-          {events.map((event) => (
-            <TouchableOpacity key={event.id} style={styles.eventItem} onPress={() => handleEventSelect(event)}>
-              <Icon2 
-                name={selectedEventId === event.id ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'} 
-                size={24} 
-                color={selectedEventId === event.id ? '#153448' : '#153448'}
-                style={{ marginRight: 5 }}  
-              />
-              <Text style={[styles.eventText, { backgroundColor: event.color }]}>{event.title}</Text>
-            </TouchableOpacity>
-          ))}
+          <ScrollView style={styles.eventsContainer}>
+            {events.map((event) => (
+              <TouchableOpacity key={event.id} style={styles.eventItem} onPress={() => handleEventSelect(event)}>
+                <Icon2 
+                  name={selectedEventId === event.id ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'} 
+                  size={24} 
+                  color={selectedEventId === event.id ? '#153448' : '#153448'}
+                  style={{ marginRight: 5 }}  
+                />
+                <Text style={[styles.eventText, { backgroundColor: event.color }]}>{event.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           {showDetails && renderDetailsView()}
         </View>
       </View>
@@ -79,10 +78,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
+    maxHeight: '100%',  // Reduce vertical size to half of the screen
     width: '80%',
     backgroundColor: '#AAB',
     padding: 20,
     borderRadius: 10,
+    overflow: 'hidden',  // Ensure the ScrollView is contained within the modal
   },
   header: {
     flexDirection: 'row',
@@ -107,19 +108,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start' 
   },
   eventText: {
-    // marginLeft: 10, // Spacing between the icon and text
-    // fontSize: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: 7,
     borderRadius: 5,
     width: 250
-  },
-  closeButton: {
-    backgroundColor: '#6CC3D5',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
   },
   closeIcon: {
     padding: 10,
@@ -130,23 +121,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  detailsHeader: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  detailsTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  detailsDescription: {
-    fontSize: 14,
-  },
   textRow: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    
   }, 
   labelText: {
     fontSize: 14,
@@ -166,16 +143,15 @@ const styles = StyleSheet.create({
   valueText: {
     fontSize: 13,
     color: 'black',
-    textAlign: 'right',
-    top: 1,
   },
   valueText2: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     fontSize: 13,
     color: 'black',
-    textAlign: 'left',
-    top: 1,
-  }
-  
+  },eventsContainer: {
+    maxHeight: 170,  
+  },
 });
 
-export default SubEventView;
+export default SubEventView; 
