@@ -6,7 +6,7 @@ const TestClient = () => {
 
   const fetchData = async () => {
     try {
-      let response = await fetch('http://14.58.108.70:8877/');
+      let response = await fetch('http://your-server-address:port/');
       let text = await response.text();
       setMessage(text);
     } catch (error) {
@@ -14,6 +14,10 @@ const TestClient = () => {
       setMessage('Failed to load data');
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.container}>

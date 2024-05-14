@@ -2,6 +2,11 @@
   "expo": {
     "name": "aninmation-text-app",
     "slug": "aninmation-text-app",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "f72513b3-972d-4ebb-a009-b13ce49f24e5"
+      }
+    }
   }
 }
