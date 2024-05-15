@@ -13,6 +13,8 @@ eas login
 설정
 eas build:configure
 
+npx create-expo-app --template
+
 
 eae. json 설정 변경
 
@@ -51,3 +53,9 @@ react-dom : React 애플리케이션을 웹 페이지에 렌더링하는데 필�
 npm install axios
 
 npm install @react-native-async-storage/async-storage
+
+Error: The required package `expo-asset` cannot be found 오류시
+npm install expo-asset
+
+Android Bundling failed 오류시
+npm install expo-constants
