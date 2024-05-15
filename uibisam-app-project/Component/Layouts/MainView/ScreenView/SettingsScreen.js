@@ -30,9 +30,9 @@ const SettingsScreen = ({ navigation }) => {
       </View>
       <Text>Settings Screen</Text>
       <TouchableOpacity style={styles.logOut} onPress={OnLogout}>
-           <Text >
-             로그아웃
-           </Text>
+          <Text >
+            로그아웃
+          </Text>
          </TouchableOpacity>
     </View>
   );

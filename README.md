@@ -59,3 +59,6 @@ npm install expo-asset
 
 Android Bundling failed 오류시
 npm install expo-constants
+
+npx create-expo-app --template
+blank

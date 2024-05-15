@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Button, SafeAreaView, RefreshControl } from 'react-native';
 import { Provider } from "react-native-paper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode as base64decode } from 'base-64';
@@ -29,6 +29,7 @@ const HomeScreen = ({ navigation }) => {
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [visibleModify, setVisibleModify] = useState(false);
   const [oldClickData, setOldClickData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false); // 새로고침 상태 추가
 
   console.log("HomeScreen 이동 완료 22",visibleAdd);
 
@@ -167,6 +168,15 @@ const HomeScreen = ({ navigation }) => {
     loadBoard();
   }, [selectProject])
 
+    // 새로고침 함수 정의
+    const onRefresh = async () => {
+      console.log("onRefresh 173");
+      setRefreshing(true);
+      await handleLoadBoard(); // 게시판 데이터를 다시 불러옵니다.
+      setRefreshing(false); // 새로고침 상태를 false로 설정합니다.
+    };
+  
+
   //onst handlePageChange = (newPage) => setCurrentPage(newPage);
   console.log("loading 166 확인", loading);
   return (
@@ -176,7 +186,11 @@ const HomeScreen = ({ navigation }) => {
           <>
             <ProjectDropdowm selectProject={selectProject} userInfo={userInfo} option={option} handleOption={handleOption} />
             <BoardState board={board} />
-            <MainBoard board={board} toggleModifyButton={toggleModifyButton} />
+            <MainBoard board={board} toggleModifyButton={toggleModifyButton}
+              refreshControl={ 
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            />
           </>
         )}
         <FloatingButton

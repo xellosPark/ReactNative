@@ -14,7 +14,7 @@ import FloatingButton from "../Layouts/MainView/FloatingButton/FloatingButton";
 
 const ITEMS_PER_PAGE = 5;
 
-const MainBoard = ({ board, toggleModifyButton }) => {
+const MainBoard = ({ board, toggleModifyButton, refreshControl }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState([]);
   const [boardData, setBoard] = useState([]);
@@ -118,11 +118,11 @@ const MainBoard = ({ board, toggleModifyButton }) => {
   
               <Text
                 style={styles.content}
-                numberOfLines={expandedItems.includes(item.id) ? null : 1}
+                numberOfLines={expandedItems.includes(item.id) ? null : 2}
               >
                 {item.content}
               </Text>
-              {item.content?.length > 50 && (
+              {item.content?.length > 200 && (
                 <TouchableOpacity onPress={() => toggleExpand(item.id)}>
                   <Text style={styles.moreButton}>
                     {expandedItems.includes(item.id) ? "접기" : "더 보기"}
@@ -146,6 +146,7 @@ const MainBoard = ({ board, toggleModifyButton }) => {
           </View>
           </TouchableOpacity>
         )}
+        refreshControl={refreshControl}
       />
       <Pagination
         style={styles.page} // 간격 없이 직접 추가
