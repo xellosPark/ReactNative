@@ -40,7 +40,7 @@ const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
           onPress={() => setPage(item)}
           disabled={item > totalPages}
         >
-           <Text style={[styles.pageText, currentPage === item && styles.activePageText]}>
+          <Text style={[styles.pageText, currentPage === item && styles.activePageText]}>
             {item > totalPages ? '' : item}
           </Text>
         </TouchableOpacity>
