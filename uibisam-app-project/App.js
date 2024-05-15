@@ -14,14 +14,8 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen name="Splash" component={UbisamSplashScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LogInView} options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="Ubisam" 
-          component={MainScreen} 
-          options={{
-            headerShown: false, // Do not show the header
-          }}
-        />
+        <Stack.Screen name="Login"  component={LogInView}  options={{ headerShown: false }} />
+        <Stack.Screen name="Ubisam" component={MainScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

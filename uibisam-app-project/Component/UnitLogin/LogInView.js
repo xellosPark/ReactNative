@@ -11,14 +11,19 @@ import Login from './Login';
 const LogInView = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  
   const handleLogin = async () => {
+    console.log("로그인 시도 16");
+    console.log(`email:${email} password:${password}` );
     if (email && password) {
       try {
+        console.log("여기확인 20");
         const result = await Login(email, password);
+        console.log("여기확인 22");
         if (result === 'success') {
-          console.log("로그인 성공");
-          navigation.navigate('Ubisam');
+          console.log("로그인 성공 24");
+          navigation.replace('Ubisam');
+          console.log("로그인 성공 25");
         } else if (result === 'TokenFail') {
           Alert.alert("로그인 실패", "토큰 저장 중 문제가 발생했습니다.");
           
@@ -38,6 +43,7 @@ const LogInView = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       // Clear both tokens from AsyncStorage
+      
       await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
       console.log("로그아웃 성공", "토큰이 성공적으로 삭제되었습니다.");
       Alert.alert("로그아웃 성공", "로그아웃이 완료되었습니다.");
@@ -45,6 +51,7 @@ const LogInView = ({ navigation }) => {
       console.error("로그아웃 실패:", error);
       Alert.alert("로그아웃 실패", "로그아웃 중 문제가 발생했습니다.");
     }
+    
   };
 
   const handleTest = async () => {

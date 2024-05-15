@@ -8,13 +8,16 @@ import TabBar from '../TabBar/TabBar';
 import { UserProvider } from '../../../API/UseContext/userContext';
 const Tab = createBottomTabNavigator();
 
-const MainScreen = () => {
+const MainScreen = ({ navigation }) => {
+
+    console.log("MainScreen 이동 완료 13");
     const [id, setId] = useState('');
     const [name, setName] = useState('');
 
     const setValue = (val) => {
         setId(val.id);
         setName(val.name);
+        console.log("setValue 20",val.id,val.name);
     }
 
     const values = {

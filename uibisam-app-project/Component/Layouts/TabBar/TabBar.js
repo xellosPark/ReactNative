@@ -9,6 +9,14 @@ const TabBar = ({ state, descriptors, navigation }) => {
                 const label = route.name;
                 const isFocused = state.index === index;
 
+                console.log(`Route name: ${label}, Index: ${index}`);
+
+                // Log the options for the current route        
+                console.log(`Options for ${label}:`, options);
+
+                // Log focus status of the current route
+                console.log(`Is ${label} focused?`, isFocused);
+
                 const onPress = () => {
                     const event = navigation.emit({
                         type: 'tabPress',

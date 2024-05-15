@@ -4,7 +4,8 @@ const UserInfo = async (id, name) => {
     //const ip = `http://localhost:3000`;
     //const ip = `http://192.168.0.140:8877`;
     //const ip = `http://192.168.0.136:8877`;
-    const ip = `http://14.58.108.70:8877`;
+    //const ip = `http://14.58.108.70:8877`;
+    const ip = `http://192.168.45.171:8877`;
     return api.get(`${ip}/getUserInfo?userEmail=${encodeURIComponent(id)}&name=${encodeURIComponent(name)}`, { //get은 body없음
         headers: {
             "Content-Type": "application/json",

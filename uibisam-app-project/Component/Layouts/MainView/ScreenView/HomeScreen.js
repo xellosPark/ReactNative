@@ -18,16 +18,19 @@ import ModalComponent from '../../../SubCompoment/ModalComponent';
 import ModifyModalComponent from '../../../SubCompoment/ModifyModalComponent';
 
 const HomeScreen = ({ navigation }) => {
+  console.log("HomeScreen 이동 완료 21");
   const [userInfo, setUserInfo] = useState([]);
   const [board, setBoard] = useState([]);
   const [selectProject, setSelectProject] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [option, setOption] = useState([]);
 
   const [showModifyButton, setShowModifyButton] = useState(false); // State to track visibility
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [visibleModify, setVisibleModify] = useState(false);
   const [oldClickData, setOldClickData] = useState([]);
+
+  console.log("HomeScreen 이동 완료 22",visibleAdd);
 
   const showAddDialog = () => setVisibleAdd(true);
   const hideAddDialog = () => {
@@ -40,15 +43,19 @@ const HomeScreen = ({ navigation }) => {
     setVisibleModify(false);
     handleLoadBoard();
   };
-
+  console.log("HomeScreen myData 46");
   const myData = useContext(UserContext);
+  console.log("HomeScreen myData 48",myData);
 
   const handleLoadBoard = async () => {
+    console.log(" handleLoadBoard 50");
     if (selectProject !== 'No Data') {
+      console.log(" handleLoadBoard 52");
       const data = await MainBoardData(selectProject);
+      console.log(" handleLoadBoard 54");
       await setBoard(data);
       await setLoading(true); // Start loading (show splash screen)
-
+      console.log("setLoading 12 확인", loading);
     } else {
       console.log(" Select Project 'No Data'");
     }
@@ -127,6 +134,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    console.log("HomeScreen useEffect 131");
     const loadData = async () => {
       const access = await AsyncStorage.getItem('accessToken');
       const val = decodeJWT(access);
@@ -136,10 +144,12 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
+    console.log("HomeScreen useEffect 141");
     const loadUserInfo = async () => {
       const userData = await handleLoadUserInfo();
     }
     loadUserInfo();
+    console.log("HomeScreen useEffect 148");
   }, [myData.id, myData.name]);
 
   useEffect(() => {
@@ -150,6 +160,7 @@ const HomeScreen = ({ navigation }) => {
   }, [userInfo])
 
   useEffect(() => {
+    console.log("HomeScreen useEffect 156");
     const loadBoard = async () => {
       await handleLoadBoard();
     }
@@ -157,7 +168,7 @@ const HomeScreen = ({ navigation }) => {
   }, [selectProject])
 
   //onst handlePageChange = (newPage) => setCurrentPage(newPage);
-
+  console.log("loading 166 확인", loading);
   return (
     <Provider>
       <SafeAreaView style={styles.container}>

@@ -38,15 +38,19 @@ const api = axios.create({
   //baseURL: 'http://192.168.0.136:8877', // 실제 API 서버 URL로 조정하세요
   //baseURL: 'http://192.168.0.140:8877', // 실제 API 서버 URL로 조정하세요
   //baseURL: 'http://localhot:3000', // 실제 API 서버 URL로 조정하세요
-  baseURL: 'http://14.58.108.70:8877', // 실제 API 서버 URL로 조정하세요
+  //baseURL: 'http://14.58.108.70:8877', // 실제 API 서버 URL로 조정하세요
+  baseURL  : 'http://192.168.45.171:8877',
 });
 
 // 요청 인터셉터
 api.interceptors.request.use(
     async (config) => {
       const token = await AsyncStorage.getItem('accessToken');
+      console.log("확인 49");
       if (token) {
+        console.log("확인 51");
         const decoded = decodeJWT(token);
+        console.log("확인 53");
         if (!decoded) {
           console.error("토큰 디코드 에러");
           return config;
@@ -54,7 +58,7 @@ api.interceptors.request.use(
   
         const currentTime = Date.now() / 1000;
         const isTokenExpired = decoded.payload.exp < currentTime;
-  
+        console.log("확인 61");
         if (!isTokenExpired) {
           config.headers['Authorization'] = `Bearer ${token}`;
           console.log("헤더에 토큰 첨부됨");

@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "metro-config": "^0.80.8"
+    "metro-config": "^0.80.9"
   },
   "private": true
 }
