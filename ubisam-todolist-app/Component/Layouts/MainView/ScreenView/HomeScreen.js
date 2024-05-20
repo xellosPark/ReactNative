@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Button, SafeAreaView, RefreshControl, Alert } from 'react-native';
 import { Provider } from "react-native-paper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode as base64decode } from 'base-64';
@@ -10,16 +10,20 @@ import MainBoardData from '../../../DashBoard/MainBoardData';
 import BoardState from '../../../DashBoard/UbStates/BoardState';
 import FloatingButton from '../FloatingButton/FloatingButton';
 import ProjectDropdowm from '../ProjectDropdowm/ProjectDropdowm';
-import UserInfo from '../../../../API/UserInfo';
-
-import UserContext, { useUserDispatch, useUserState } from '../../../../API/UseContext/userContext';
-import ProjectInfoData from '../../../../API/ProjectInfoData';
 import ModalComponent from '../../../SubCompoment/ModalComponent';
 import ModifyModalComponent from '../../../SubCompoment/ModifyModalComponent';
+import FlowingText from '../../../DashBoard/UbStates/FlowingText';
+
+import UserContext, { useUserDispatch, useUserState } from '../../../../API/UseContext/userContext';
+import UserInfo from '../../../../API/UserInfo';
+import ProjectInfoData from '../../../../API/ProjectInfoData';
+import LoadMainBoardData from '../../../../API/LoadMainBoardData';
+import LoadSubBoardData from '../../../../API/LoadSubBoardData';
 
 const HomeScreen = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState([]);
   const [board, setBoard] = useState([]);
+  //const [subBoard, setSubBoard] = useState([]);
   const [selectProject, setSelectProject] = useState('');
   const [loading, setLoading] = useState(false);
   const [option, setOption] = useState([]);
@@ -28,6 +32,8 @@ const HomeScreen = ({ navigation }) => {
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [visibleModify, setVisibleModify] = useState(false);
   const [oldClickData, setOldClickData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false); // 새로고침 상태 추가
+  const [filterName, setFilterName] = useState('전체');
 
   const showAddDialog = () => setVisibleAdd(true);
   const hideAddDialog = () => {
@@ -35,7 +41,11 @@ const HomeScreen = ({ navigation }) => {
     handleLoadBoard();
   }
 
-  const showModifyDialog = () => setVisibleModify(true);
+  const showModifyDialog = () => {
+    //Alert.alert('안내','현재 web에서 사용하는 수정 기능 업데이트 전입니다. web을 이용해주세요');
+    //return;
+    setVisibleModify(true);
+  }
   const hideModifyDialog = () => {
     setVisibleModify(false);
     handleLoadBoard();
@@ -45,14 +55,15 @@ const HomeScreen = ({ navigation }) => {
 
   const handleLoadBoard = async () => {
     if (selectProject !== 'No Data') {
-      const data = await MainBoardData(selectProject);
-      await setBoard(data);
-      await setLoading(true); // Start loading (show splash screen)
-
+      const data = await LoadMainBoardData(selectProject);
+      const subData = await LoadSubBoardData(selectProject);
+      const fullData = await parseData(data, subData);
+      //console.log('fullData', fullData);
+      await setBoard(fullData);
+      //await setLoading(true); // Start loading (show splash screen)
     } else {
       console.log(" Select Project 'No Data'");
     }
-
   }
 
   const handleOption = (item) => {
@@ -106,13 +117,12 @@ const HomeScreen = ({ navigation }) => {
 
       return { header, payload };
     } catch (error) {
-      //console.error("Failed to decode JWT:", error);
       return null;
     }
   }
 
   const toggleModifyButton = (item) => {
-    //console.log('클릭한 내용 제대로 ',item);
+    console.log('click ', item);
     if (item.name !== myData.name) {
       setShowModifyButton(false);
       return;
@@ -126,20 +136,74 @@ const HomeScreen = ({ navigation }) => {
     setOldClickData(item);
   };
 
+  // 새로고침 함수 정의
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await handleLoadBoard(); // 게시판 데이터를 다시 불러옵니다.
+    setRefreshing(false); // 새로고침 상태를 false로 설정합니다.
+  };
+
+  const parseData = async (data, subData) => {
+    if (subData === undefined) {
+      return await data;
+    }
+    await subData.forEach(detail => {
+      // 해당 targetIndex를 가진 객체를 찾습니다.
+      let item = data.find(item => item.Key === detail.FieldNum);
+      if (item.Key === 364) {
+      }
+      if (item) {
+          // details 속성이 없다면 초기화합니다.
+          if (!item.details) {
+              item.details = [JSON.parse(JSON.stringify(item))]; //status 업데이트를 위해 복사해서 초기화함
+          }
+          // details 배열에 상세 정보를 추가합니다. targetIndex는 제외합니다.
+          item.details.push({
+              Index: detail.Index,
+              ProjectName: detail.ProjectName,
+              Date: detail.Date,
+              ChangeDate: detail.ChangeDate,
+              Name: detail.Name,
+              Title: detail.Title,
+              Content: detail.Content,
+              Status: detail.Status,
+              FieldNum: detail.FieldNum,
+              FieldSubNum: detail.FieldSubNum,
+          });
+          item.details[0].Status = item.details[item.details.length - 1].Status;
+      }
+  });
+  return await data;
+  }
+
   useEffect(() => {
+    const timer = setTimeout(() => {
+      loadData();
+    }, 500);
     const loadData = async () => {
       const access = await AsyncStorage.getItem('accessToken');
       const val = decodeJWT(access);
+      if (!val.header) {
+        return
+      }
+      if (!val.payload) {
+        return
+      }
       await myData.setValue(val.payload);
     }
     loadData();
-  }, []);
+    return () => clearTimeout(timer);
+  });
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      loadUserInfo();
+    }, 500);
     const loadUserInfo = async () => {
       const userData = await handleLoadUserInfo();
     }
     loadUserInfo();
+    return () => clearTimeout(timer);
   }, [myData.id, myData.name]);
 
   useEffect(() => {
@@ -154,22 +218,22 @@ const HomeScreen = ({ navigation }) => {
       await handleLoadBoard();
     }
     loadBoard();
-
-    
   }, [selectProject])
 
-  //onst handlePageChange = (newPage) => setCurrentPage(newPage);
 
   return (
     <Provider>
       <SafeAreaView style={styles.container}>
-        {loading && (
-          <>
-            <ProjectDropdowm selectProject={selectProject} userInfo={userInfo} option={option} handleOption={handleOption} />
-            <BoardState board={board} />
-            <MainBoard board={board} toggleModifyButton={toggleModifyButton} />
-          </>
-        )}
+        <>
+          <ProjectDropdowm selectProject={selectProject} userInfo={userInfo} option={option} handleOption={handleOption} />
+          <BoardState board={board} setFilterName={setFilterName} />
+          <FlowingText selectProject={selectProject} />
+          <MainBoard board={board} toggleModifyButton={toggleModifyButton} filterName={filterName}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+        </>
         <FloatingButton
           onPress={showAddDialog}
           icon="add-outline"
@@ -180,12 +244,12 @@ const HomeScreen = ({ navigation }) => {
         {/* Conditionally render the Edit button */}
         {showModifyButton && (
           <>
-          <FloatingButton
-            onPress={showModifyDialog}
-            icon="create-outline"
-            style={styles.editButton}
-          />
-          <ModifyModalComponent data={oldClickData} name={myData.name} selectProject={selectProject} visibleModify={visibleModify} onDismiss={hideModifyDialog} />
+            <FloatingButton
+              onPress={showModifyDialog}
+              icon="create-outline"
+              style={styles.editButton}
+            />
+            <ModifyModalComponent data={oldClickData} name={myData.name} selectProject={selectProject} visibleModify={visibleModify} onDismiss={hideModifyDialog} />
           </>
         )}
       </SafeAreaView>

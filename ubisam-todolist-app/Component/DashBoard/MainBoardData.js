@@ -138,7 +138,7 @@
 import axios from 'axios';
 import api from '../../API/api';
 
-const MainBoardData = async (pjtName) => {
+const MainBoardData = async (projectName) => {
     //console.log(`Board Data 불러오기`);
     //const ip = process.env.REACT_APP_API_DEV === "true" ? `http://192.168.0.136:8877` : `http://14.58.108.70:8877`;
     //const ip = `http://192.168.0.140:8877`;
@@ -148,7 +148,7 @@ const MainBoardData = async (pjtName) => {
 
     //console.log("MainBoardData ip",ip);
     return await api.post(`${ip}/Board`, {
-        projectName: pjtName, // 나중에 변경
+        projectName: projectName,
     }, {
         headers: {
             "Content-Type": "application/json",
@@ -166,7 +166,7 @@ const MainBoardData = async (pjtName) => {
                 Title: item.Title, // 서버로부터 받은 데이터 구조에 따라 접근
                 Content: item.Content, // 서버로부터 받은 데이터 구조에 따라 접근
                 Status: item.Status, // 서버로부터 받은 데이터 구조에 따라 접근
-                Plus: item.Plus
+                //Plus: item.Plus
             }));
             //console.log("newData 166 = ", newDataRow);
             const sortedData = newDataRow.sort((a, b) => new Date(b.Index) - new Date(a.Index)); //최신부터 보여줌

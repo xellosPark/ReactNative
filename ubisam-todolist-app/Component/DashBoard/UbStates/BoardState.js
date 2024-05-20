@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity } from 'react-native';
   
   const colorStep = ['#ccccff', '#ADD8E6', '#FFD700', '#ffccff', '#E64F5A', ];
 
-const BoardState = ({board}) => {
+const BoardState = ({board, setFilterName}) => {
   const [tabStep, setTabStep] = useState([]);
   const [tabData, setTabData] = useState([]);
 
@@ -72,6 +72,10 @@ const BoardState = ({board}) => {
     await setTabData(resultData);
   };
 
+  const handlePress = (item) => {
+    setFilterName(item.title);
+  }
+
   useEffect(() => {
     setTabStep([]);
     setTabData([]);
@@ -84,22 +88,25 @@ const BoardState = ({board}) => {
     <View style={styles.container}>
       <ScrollView horizontal style={styles.auxScroll} contentContainerStyle={styles.centerContent}>
         {tabStep.map((item) => (
+          <TouchableOpacity key={item.key} onPress={() => handlePress(item)}>
           <View
-            key={item.id}
+            key={item.key}
             style={[styles.itemContainer, { backgroundColor: item.color }]}
           >
             <Text style={styles.auxTitle}>{item.title}</Text>
             <Text style={styles.auxValue}>{item.value}</Text>
           </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
       <ScrollView horizontal style={[styles.auxScroll, styles.auxRow2]} contentContainerStyle={styles.leftContent}>
           {tabData.map(item => (
-            <View key={item.id} style={[styles.itemContainer, { backgroundColor: '#A7CCCB' }]}>
+            <View key={item.key} style={[styles.itemContainer, { backgroundColor: '#A7CCCB' }]}>
               <Text style={styles.auxTitle}>{item.title}</Text>
               <Text style={styles.auxValue}>{item.value}</Text>
             </View>
+            
           ))}
        </ScrollView>
     </View>

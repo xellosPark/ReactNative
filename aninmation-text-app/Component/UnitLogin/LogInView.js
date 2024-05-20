@@ -22,9 +22,11 @@ const LogInView = ({ navigation }) => {
         } else if (result === 'TokenFail') {
           Alert.alert("로그인 실패", "토큰 저장 중 문제가 발생했습니다.");
           
+        } else if (result === 'fail') {
+          Alert.alert("로그인 실패", "서버로 데이터 보내지못함.");
         }
          else {
-          Alert.alert("로그인 실패", "아이디 또는 비밀번호가 맞지 않습니다.");
+          Alert.alert("로그인 실패", "아이디 또는 비밀번호가 맞지 않습니다.", result);
         }
       } catch (error) {
         console.error("로그인 실패:", error);

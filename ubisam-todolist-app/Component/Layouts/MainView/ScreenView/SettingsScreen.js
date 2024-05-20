@@ -10,13 +10,14 @@ const SettingsScreen = ({ navigation }) => {
   const OnLogout = async () => {
     try {
       // Clear both tokens from AsyncStorage
+      navigation.replace('Login');
       await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
 
-      //const data = {id : '', name : '', project : ''};
-      //await myData.setValue(null);
+      const data = {id : '', name : ''};
+      await myData.setValue(data);
       console.log("로그아웃 성공", "토큰이 성공적으로 삭제되었습니다.");
       Alert.alert("로그아웃 성공", "로그아웃이 완료되었습니다.");
-      navigation.navigate('Login');
+      
     } catch (error) {
       console.error("로그아웃 실패:", error);
       Alert.alert("로그아웃 실패", "로그아웃 중 문제가 발생했습니다.");
