@@ -31,7 +31,7 @@ const MyComponent = () => {
   const handlePageChange = (newPage) => setCurrentPage(newPage);
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         data={currentItems}
         keyExtractor={(item) => `${item.id}`} // Ensures a unique key
@@ -56,22 +56,29 @@ const MyComponent = () => {
             </View>
           </View>
         )}
-      />
-      <Pagination
-        totalItems={data.length}
-        itemsPerPage={ITEMS_PER_PAGE}
-        onPageChange={handlePageChange}
+        ListFooterComponent={
+          <Pagination
+            totalItems={data.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        }
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   row: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: 'grey',
-    padding: 10,
+    paddingVertical: 5, // Adjusted padding to reduce space between items
+    paddingHorizontal: 10,
   },
   contentColumn: {
     flex: 3,
@@ -92,6 +99,22 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 12,
     color: 'green',
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  pageNumber: {
+    marginHorizontal: 2, // Adjusted margin to reduce space between page numbers
+    padding: 5,
+    fontSize: 18,
+    color: 'blue',
+  },
+  currentPage: {
+    fontWeight: 'bold',
+    color: 'red',
   },
 });
 

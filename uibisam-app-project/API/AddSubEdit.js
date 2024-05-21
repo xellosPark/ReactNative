@@ -3,10 +3,11 @@ import api from './api';
 const AddSubEdit = async (orignal, item, name, selectProject) => {
     let project = ''
     //const ip = `http://localhost:3000`;
-    //const ip = `http://192.168.0.140:8877`;
+    const ip = `http://192.168.0.140:8877`;
     //const ip = `http://192.168.0.136:8877`;
     //const ip = `http://14.58.108.70:8877`;
-    const ip = `http://192.168.45.171:8877`;
+    //const ip = `http://192.168.45.171:8877`;
+    
     const _ProjectName = selectProject.replace(/ /g, '_');
     const index = _ProjectName.indexOf('(');
     if (index !== -1) {

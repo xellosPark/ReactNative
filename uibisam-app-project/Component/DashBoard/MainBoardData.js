@@ -141,11 +141,11 @@ import api from '../../API/api';
 const MainBoardData = async (pjtName) => {
     //console.log(`Board Data 불러오기`);
     //const ip = process.env.REACT_APP_API_DEV === "true" ? `http://192.168.0.136:8877` : `http://14.58.108.70:8877`;
-    //const ip = `http://192.168.0.140:8877`;
+    const ip = `http://192.168.0.140:8877`;
     //const ip = `http://192.168.0.136:8877`;
     //const ip = `http://localhost:3000`;
     //const ip = `http://14.58.108.70:8877`;
-    const ip = `http://192.168.45.171:8877`;
+    //const ip = `http://192.168.45.171:8877`;
 
     console.log("MainBoardData ip",ip);
     return await api.post(`${ip}/Board`, {

@@ -36,10 +36,10 @@ function decodeJWT(token) {
 // API 사용을 위한 Axios 인스턴스 생성
 const api = axios.create({
   //baseURL: 'http://192.168.0.136:8877', // 실제 API 서버 URL로 조정하세요
-  //baseURL: 'http://192.168.0.140:8877', // 실제 API 서버 URL로 조정하세요
+  baseURL: 'http://192.168.0.140:8877', // 실제 API 서버 URL로 조정하세요
   //baseURL: 'http://localhot:3000', // 실제 API 서버 URL로 조정하세요
   //baseURL: 'http://14.58.108.70:8877', // 실제 API 서버 URL로 조정하세요
-  baseURL  : 'http://192.168.45.171:8877',
+  //baseURL  : 'http://192.168.45.171:8877',
 });
 
 // 요청 인터셉터

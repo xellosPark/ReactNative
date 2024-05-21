@@ -177,7 +177,7 @@ const HomeScreen = ({ navigation }) => {
     };
   
 
-  //onst handlePageChange = (newPage) => setCurrentPage(newPage);
+  //const handlePageChange = (newPage) => setCurrentPage(newPage);
   console.log("loading 166 확인", loading);
   return (
     <Provider>

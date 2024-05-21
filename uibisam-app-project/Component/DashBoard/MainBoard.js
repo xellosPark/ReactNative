@@ -146,14 +146,17 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl }) => {
           </View>
           </TouchableOpacity>
         )}
+        ListFooterComponent={
+          <Pagination style={styles.page}
+            totalItems={changeData.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        }
         refreshControl={refreshControl}
       />
-      <Pagination
-        style={styles.page} // 간격 없이 직접 추가
-        totalItems={changeData.length}
-        itemsPerPage={ITEMS_PER_PAGE}
-        onPageChange={handlePageChange}
-      />
+      {/* <Pagination style={styles.page} totalItems={changeData.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={handlePageChange} /> */}
     </View>
   );
 };
