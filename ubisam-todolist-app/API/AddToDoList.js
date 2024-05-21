@@ -10,8 +10,8 @@ const AddToDoList = async (item, name, selectProject) => {
     return await api.post(`${ip}/ToDoList`, {
         ProjectName: selectProject,
         Date: item.setDate,
-        //Period: item.period,
-        //Requester: item.requester,
+        Period: item.period,
+        Requester: item.requester,
         Name: name,
         Title: item.title,
         Content: item.content,

@@ -9,8 +9,8 @@ import AddToDoList from "../../API/AddToDoList";
 const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
 
   const currentDate = new Date();
-  const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')} - `;
-  const setDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+  const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${(currentDate.getDate() + 1).toString().padStart(2, '0')} - `;
+  const setDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${(currentDate.getDate() + 1).toString().padStart(2, '0')}`;
   
   const [dataValue, setDataValue] = useState(formattedDate);
   const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일","11일","12일","13일","14일","15일"]; 

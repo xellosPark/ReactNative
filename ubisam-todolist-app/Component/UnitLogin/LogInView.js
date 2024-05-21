@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import styles from './LogInViewStyles'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -7,10 +7,13 @@ import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../API/api';
 import Login from './Login';
+import UserContext from '../../API/UseContext/userContext';
 
 const LogInView = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const myData = useContext(UserContext);
 
   const handleLogin = async () => {
     if (email && password) {
@@ -18,7 +21,7 @@ const LogInView = ({ navigation }) => {
         const result = await Login(email, password);
         if (result === 'success') {
           console.log("로그인 성공");
-          navigation.navigate('Ubisam');
+          navigation.replace('Ubisam');
         } else if (result === 'TokenFail') {
           Alert.alert("로그인 실패", "토큰 저장 중 문제가 발생했습니다.");
           
@@ -71,6 +74,30 @@ const LogInView = ({ navigation }) => {
         console.error('Access Denied. Token may be expired or invalid.');
       }
       throw error; // Rethrow the error for further handling if necessary
+    }
+  }
+
+  function decodeJWT(token) {
+    try {
+      //console.log('token 11', token);
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        throw new Error('Invalid token: The JWT must have three parts');
+      }
+
+      const header = JSON.parse(base64decode(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+      //const payload = JSON.parse(base64decode(parts[1].replace(/-/g, '+').replace(/_/g, '/'))); //한글없이는 이렇게 사용가능
+      const payloadEncoded = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const payloadDecoded = base64decode(payloadEncoded);
+
+      const decoder = new TextDecoder('utf-8');
+      const payloadUtf8 = decoder.decode(new Uint8Array(Array.from(payloadDecoded).map(char => char.charCodeAt(0))));
+      const payload = JSON.parse(payloadUtf8);
+
+      return { header, payload };
+    } catch (error) {
+      //console.error("Failed to decode JWT:", error);
+      return null;
     }
   }
   

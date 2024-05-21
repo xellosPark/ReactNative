@@ -9,7 +9,6 @@ const Login = async (email, password) => {
     //const ip = `http://192.168.0.136:8877`;
     //const ip = `http://192.168.0.140:8877`;
     const ip = `http://14.58.108.70:8877`;
-    
     try {
         const response = await api.post(`${ip}/login`, {
             email,
@@ -31,7 +30,6 @@ const Login = async (email, password) => {
         }
 
     } catch (error) {
-        console.error("로그인 실패:", error);
         return 'fail';
     }
 };
