@@ -122,7 +122,6 @@ const HomeScreen = ({ navigation }) => {
   }
 
   const toggleModifyButton = (item) => {
-    console.log('click ', item);
     if (item.name !== myData.name) {
       setShowModifyButton(false);
       return;

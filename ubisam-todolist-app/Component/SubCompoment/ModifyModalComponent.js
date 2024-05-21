@@ -100,6 +100,7 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
   }
 
   const handleCancel = () => {
+    initTodoList();
     onDismiss();
   };
 
@@ -115,10 +116,9 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
         await setSubRows([]);
       } else {
         if (data?.details.length > 0) {
-          console.log('orignal data', data);
           const { Index, Key, ProjectName, date, changedate, Name, Title, content, Status, Period, Requester, details } = data;
           const parentRow = { Index, Key, ProjectName, date, changedate, Name, Title, content, Status, Period, Requester };
-          console.log('parentRow', parentRow);
+          
           setTitle(data?.details[data.details.length - 1].Title);
           if (data?.details[data.details.length - 1].Date === setDate) {
             setDataValue(data?.details[data.details.length - 1].Content);
@@ -126,9 +126,8 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
           setStatusVal(data?.details[data.details.length - 1].Status);
           setOldStatusVal(data?.details[data.details.length - 1].Status);
           const newSubRows = [parentRow, ...details];
-          console.log('sub', details);
           setSubRows(newSubRows);
-          console.log('sub', newSubRows);
+          console.log('show ', newSubRows);
         }
       }
     };
@@ -174,7 +173,7 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
                     <Text style={styles.eventContent} numberOfLines={isExpanded ? 0 : 2}>
                       {event.Content}
                     </Text>
-                    {event.Content?.length > 60 && (
+                    {event.Content?.length > 100 && (
                       <TouchableOpacity onPress={toggleNumberOfLines}>
                         <Text style={styles.moreButton}>{isExpanded ? "접기🔼" : "더 보기🔽"}</Text>
                       </TouchableOpacity>
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "#EEEE",
     borderRadius: 20,
-    padding: 35,
+    padding: 25,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   inputContainer: {
-    marginVertical: 8,
+    marginVertical: 4,
   },
   label: {
     fontSize: 14,
@@ -289,7 +288,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     borderWidth: 1,
-    padding: 8,
+    padding: 2,
     borderRadius: 4,
     maxHeight: 150,
   },
@@ -300,9 +299,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   eventContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    flexDirection: 'column',
+    alignItems: 'left',
+    marginBottom: 1,
   },
   eventContent: {
     flex: 1,
@@ -311,7 +310,6 @@ const styles = StyleSheet.create({
   moreButton: {
     fontWeight: 'bold',
     color: '#1E90FF',
-    marginTop: 5,
   },
 
 });
