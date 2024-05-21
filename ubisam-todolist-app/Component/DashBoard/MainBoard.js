@@ -116,7 +116,7 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
     //console.log('OnFilterName 81', filterName);
     let data =[];
     ///////////////
-    ///데이터 일부 사라져있음 다시 확인할 필요있음 2222222
+    ///데이터 일부 사라져있음 다시 확인할 필요있음 2222222 3433333
     //////////////
     const Data = await boardData.filter(item => item.status === filterName);
     if (tabs === '전체') {
