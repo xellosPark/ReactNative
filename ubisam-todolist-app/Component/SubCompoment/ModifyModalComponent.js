@@ -118,7 +118,10 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
         if (data?.details.length > 0) {
           const { Index, Key, ProjectName, date, changedate, Name, Title, content, Status, Period, Requester, details } = data;
           const parentRow = { Index, Key, ProjectName, date, changedate, Name, Title, content, Status, Period, Requester };
-          
+          //이렇게 했는데도 나오지 않는 데이터 있음
+          //const { index, key, projectName, date, changedate, name, title, content, status, period, requester, details } = data;
+          //const parentRow = { index, key, projectName, date, changedate, name, title, content, status, period, requester };
+
           setTitle(data?.details[data.details.length - 1].Title);
           if (data?.details[data.details.length - 1].Date === setDate) {
             setDataValue(data?.details[data.details.length - 1].Content);
