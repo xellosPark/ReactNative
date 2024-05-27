@@ -28,7 +28,6 @@ const AddSubEdit = async (item, name, selectProject, project, subNum) => {
             "Content-Type": "application/json",
         }
     }).then(response => {
-        console.log({ response });
         if (response.status === 200) {
             return response.status;
         } else if (response.data.code === 403) { //에러메세지 로그 없이 처리하려할때
@@ -36,7 +35,7 @@ const AddSubEdit = async (item, name, selectProject, project, subNum) => {
 
         }
     }).catch(error => {
-        //console.log({error});
+        console.log('AddSubEdit 40', error);
         if (error.response.status === 403) {
             alert(`${error.response.data.message}`);
         }

@@ -54,7 +54,7 @@ const HomeScreen = ({ navigation }) => {
   const myData = useContext(UserContext);
 
   const handleLoadBoard = async () => {
-    if (selectProject !== 'No Data') {
+    if (selectProject !== 'No Data' && selectProject !== '') {
       const data = await LoadMainBoardData(selectProject);
       const subData = await LoadSubBoardData(selectProject);
       const fullData = await parseData(data, subData);

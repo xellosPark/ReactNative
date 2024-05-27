@@ -1,5 +1,5 @@
 import api from './api';
-const UpdateSubEdit = async (item, name, selectedProjectName, project, subRow) => {
+const UpdateSubEdit = async (item, name, selectedProjectName, project, subRow, index) => {
     //const ip = `http://localhost:3000`;
     //const ip = `http://192.168.0.140:8877`;
     //const ip = `http://192.168.0.136:8877`;
@@ -12,9 +12,8 @@ const UpdateSubEdit = async (item, name, selectedProjectName, project, subRow) =
     //     project = _ProjectName.substring(0, index);
     // }
     // else project = _ProjectName; // '(' 기호가 없는 경우, 전체 텍스트 반환
-    console.log('UpdateSubEdit');
     return api.post(`${ip}/subUpdateBoard`, {
-        Index: item.Key,
+        Index: index,
         ProjectName: selectedProjectName,
         _ProjectName: project,
         ChangeDate: item.setDate,
@@ -23,13 +22,12 @@ const UpdateSubEdit = async (item, name, selectedProjectName, project, subRow) =
         Content: item.content,
         Status: item.status,
         FieldNum: item.Key,
-        //FieldSubNum: subRow,
+        FieldSubNum: subRow,
     }, {
         headers: {
             "Content-Type": "application/json",
         }
     }).then(response => {
-        console.log({ response });
         if (response.status === 200) {
             return response.status;
         } else if (response.data.code === 403) { //에러메세지 로그 없이 처리하려할때

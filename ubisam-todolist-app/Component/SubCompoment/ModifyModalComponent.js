@@ -60,19 +60,20 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
       }
       else project = _ProjectName; // '(' 기호가 없는 경우, 전체 텍스트 반환
 
+      console.log('Modify 63', subRows[subRows.length - 1]);
       if (subRows.length > 0) { // sub 게시물이 추가되어 있고 날짜가 다르다면 새로운 sub게시물 추가
-        if (subRows[subRows.length - 1].Data !== setDate) {
+        console.log('Modify 65', subRows[subRows.length - 1].Date, setDate);
+        if (subRows[subRows.length - 1].Date !== setDate) {
           subNum = subRows[subRows.length - 1].FieldSubNum + 1;
-          console.log(`sub Add222 ${item}`);
-          await AddSubEdit(item, name, selectProject, project, subNum);// - 추가 필요
+          result = await AddSubEdit(item, name, selectProject, project, subNum);// - 추가 필요
         } else { // sub 게시물이 추가되어 있고 날짜가 같으면 해당 sub 업데이트
-          console.log(`Edit Update ${item}`);
-          await UpdateSubEdit(item, name, selectProject, project, subRows[subRows.length - 1]);// - 추가 필요
+          console.log('업데이트 진행 70');
+          subNum = subRows[subRows.length - 1].FieldSubNum;
+          result = await UpdateSubEdit(item, name, selectProject, project, subNum, subRows[subRows.length - 1].Index);// - 추가 필요
         }
 
       } else { // sub 게시물이 하나도 없다면 새로 추가
         subNum = 1;
-        console.log(`sub Add111`, item);
         result = await AddSubEdit(item, name, selectProject, project, subNum);
       }
 
@@ -88,7 +89,7 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
       return;
     };
 
-    initTodoList();
+    //initTodoList();
     onDismiss();
   };
 
@@ -130,7 +131,6 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
           setOldStatusVal(data?.details[data.details.length - 1].Status);
           const newSubRows = [parentRow, ...details];
           setSubRows(newSubRows);
-          console.log('show ', newSubRows);
         }
       }
     };
@@ -169,8 +169,8 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
             <>
               <Text style={styles.label}>진행 내용</Text>
               <ScrollView style={styles.scrollView}>
-                {subRows.map((event) => (
-                  <View key={event.Index} style={styles.eventContainer}>
+                {subRows.map((event, index) => (
+                  <View key={`${event.Index}_${index}`} style={styles.eventContainer}>
                     <View style={[styles.colorIndicator, { backgroundColor: event.color },]} />
                     {/* <Text style={styles.eventContent}>{event.content}</Text> */}
                     <Text style={styles.eventContent} numberOfLines={isExpanded ? 0 : 2}>

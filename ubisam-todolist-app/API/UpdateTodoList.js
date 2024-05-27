@@ -18,7 +18,6 @@ const UpdateTodoList = async (item, name, selectProject) => {
             "Content-Type": "application/json",
         }
     }).then(response => {
-        console.log({ response });
         if (response.status === 200) {
             return response.status;
         } else if (response.data.code === 403) { //에러메세지 로그 없이 처리하려할때
