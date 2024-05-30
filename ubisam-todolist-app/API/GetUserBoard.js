@@ -14,7 +14,7 @@ const GetUserBoard = async (name, item, selectProject) => {
         //console.log('getPersnalBoard_DB',res.data);
         const dataRow = res.data.map((item, index) => ({
           title: item.Title,
-          id: item.Index,
+          index: item.Index,
           project: item.ProjectName,
           date: item.Date,
           Name: item.Name,

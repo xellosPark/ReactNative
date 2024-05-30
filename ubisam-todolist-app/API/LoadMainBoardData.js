@@ -28,7 +28,8 @@ const LoadMainBoardData = async (projectName) => {
                 Title: item.Title, // 서버로부터 받은 데이터 구조에 따라 접근
                 Content: item.Content, // 서버로부터 받은 데이터 구조에 따라 접근
                 Status: item.Status, // 서버로부터 받은 데이터 구조에 따라 접근
-                //Plus: item.Plus
+                Requester: item.Requester,
+                ReqManager: item.ReqManager,
             }));
             //console.log("newData 166 = ", newDataRow);
             const sortedData = newDataRow.sort((a, b) => new Date(b.Index) - new Date(a.Index)); //최신부터 보여줌

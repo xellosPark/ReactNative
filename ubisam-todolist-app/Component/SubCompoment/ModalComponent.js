@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity } from "react-native";
 import ChipComponent from "./ChipComponent";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -9,16 +9,17 @@ import AddToDoList from "../../API/AddToDoList";
 const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
 
   const currentDate = new Date();
-  const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${(currentDate.getDate() + 1).toString().padStart(2, '0')} - `;
-  const setDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${(currentDate.getDate() + 1).toString().padStart(2, '0')}`;
-  
+  const formattedDate = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${(currentDate.getDate()).toString().padStart(2, '0')} - `;
+  const setDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${(currentDate.getDate()).toString().padStart(2, '0')}`;
+
   const [dataValue, setDataValue] = useState(formattedDate);
-  const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일","11일","12일","13일","14일","15일"]; 
+  const periodOptions = ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일", "11일", "12일", "13일", "14일", "15일"];
   const [title, setTitle] = useState("");
   const [requester, setRequester] = useState("");
   const [period, setPeriod] = useState("1일");
-  const [statusVal, setStatusVal] = useState("");
-  
+  const [statusVal, setStatusVal] = useState("대기");
+  const [reqManager, setReqManager] = useState("");
+
   const handleAdd = async () => {
 
     if (title === "") {
@@ -40,6 +41,7 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
     const item = {
       title: title,
       requester: requester,
+      reqManager: reqManager,
       setDate: setDate,
       period: period,
       status: statusVal,
@@ -51,13 +53,12 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
     if (result !== 200) {
       alert('저장에 실패했습니다. 관리자에게 문의해보세요', result);
       return;
-      
+
     }
 
     initTodoList();
     onDismiss();
-    console.log('닫기완료');
-    
+
   };
 
   const handleCancel = () => {
@@ -67,7 +68,8 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
   const initTodoList = () => {
     setTitle("");
     setRequester("");
-    setStatusVal("");
+    setReqManager("");
+    setStatusVal("대기");
     setDataValue(formattedDate);
   }
 
@@ -106,13 +108,22 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
               </Picker>
             </View>
             <View style={styles.inputContainer}>
-            <Text style={styles.label}>요청자 서명</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={setRequester}
-              value={requester}
-              placeholder="이름작성 해주세요!!"
-            />
+              <Text style={styles.label}>요청자</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setRequester}
+                value={requester}
+                placeholder="이름작성 해주세요!!"
+              />
+            </View>
+            <View style={[styles.inputContainer, { marginLeft: 5 }]}>
+              <Text style={styles.label}>요청 담당자</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setReqManager}
+                value={reqManager}
+                placeholder="이름작성 해주세요!!"
+              />
             </View>
           </View>
           <View style={styles.inputContainer}>
@@ -129,7 +140,7 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
               value={dataValue}
               onChangeText={setDataValue}
               placeholder="YYYY/MM/DD - " // 사용자를 위한 플레이스홀더 텍스트
-              numberOfLines={5} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
+              numberOfLines={15} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
             />
           </View>
           <View style={styles.buttonContainer}>
@@ -154,10 +165,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.4)", // Semi-transparent background
   },
   modalView: {
-    margin: 20,
+    width: '95%',
     backgroundColor: "#EEEE",
     borderRadius: 20,
-    padding: 35,
+    padding: 15,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -165,10 +176,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
-  },
-  dialog: {
-    width: "90%",
+    elevation: 5,
+
   },
   inputContainer: {
     marginVertical: 8,
@@ -196,7 +205,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
-    height: 100,
+    height: 250,
     textAlign: 'left',
     textAlignVertical: 'top',
   },
@@ -227,16 +236,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // 요소들을 가로로 나열
   },
   picker: {
-    width: 140,
+    width: 115,
   },
   input: {
-    height:50, // 피커의 높이 설정
-    width: 150,
+    width: 120,
     borderWidth: 1,
     borderColor: '#222',
-    padding: 10,
-    borderRadius: 5,
-    
+    padding: 8,
+    borderRadius: 4,
   }
 });
 

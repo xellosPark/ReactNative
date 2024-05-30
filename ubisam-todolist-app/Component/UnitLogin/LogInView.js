@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import styles from './LogInViewStyles'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -77,29 +77,10 @@ const LogInView = ({ navigation }) => {
     }
   }
 
-  function decodeJWT(token) {
-    try {
-      //console.log('token 11', token);
-      const parts = token.split('.');
-      if (parts.length !== 3) {
-        throw new Error('Invalid token: The JWT must have three parts');
-      }
-
-      const header = JSON.parse(base64decode(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
-      //const payload = JSON.parse(base64decode(parts[1].replace(/-/g, '+').replace(/_/g, '/'))); //한글없이는 이렇게 사용가능
-      const payloadEncoded = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      const payloadDecoded = base64decode(payloadEncoded);
-
-      const decoder = new TextDecoder('utf-8');
-      const payloadUtf8 = decoder.decode(new Uint8Array(Array.from(payloadDecoded).map(char => char.charCodeAt(0))));
-      const payload = JSON.parse(payloadUtf8);
-
-      return { header, payload };
-    } catch (error) {
-      //console.error("Failed to decode JWT:", error);
-      return null;
-    }
-  }
+  useEffect(() => {
+    AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+    console.log('로그인 창 보이면 맨처음에는 무조건 실행');
+  }, [])
   
 
   return (

@@ -10,9 +10,9 @@ const SubEventView = ({ visible, events, onClose }) => {
 
   // 이벤트 선택 핸들러
   const handleEventSelect = (event) => {
+    console.log('ID 상태 13',event);
     setSelectedEvent(event); // 선택된 이벤트로 상태 업데이트
-    //console.log('ID 상태 13',event?.id);
-    setSelectedEventId(event?.id); // 선택된 이벤트 ID로 상태 업데이트
+    setSelectedEventId(event?.index); // 선택된 이벤트 ID로 상태 업데이트
     setShowDetails(true); // 상세정보 보기 활성화
   };
 
@@ -59,11 +59,11 @@ const SubEventView = ({ visible, events, onClose }) => {
           </View>
           <ScrollView style={styles.eventsContainer}>
             {events.map((event) => (
-              <TouchableOpacity key={event.id} style={styles.eventItem} onPress={() => handleEventSelect(event)}>
+              <TouchableOpacity key={event.index} style={styles.eventItem} onPress={() => handleEventSelect(event)}>
                 <Icon2 
-                  name={selectedEventId === event.id ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'} 
+                  name={selectedEventId === event.index ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'} 
                   size={24} 
-                  color={selectedEventId === event.id ? '#153448' : '#153448'}
+                  color={selectedEventId === event.index ? '#153448' : '#153448'}
                   style={{ marginRight: 5 }}  
                 />
                 <Text style={[styles.eventText, { backgroundColor: event.color }]}>{event.title}</Text>

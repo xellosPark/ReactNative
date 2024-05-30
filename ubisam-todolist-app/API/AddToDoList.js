@@ -5,13 +5,13 @@ const AddToDoList = async (item, name, selectProject) => {
     //const ip = `http://192.168.0.140:8877`;
     //const ip = `http://192.168.0.136:8877`;
     const ip = `http://14.58.108.70:8877`;
-    console.log(`AddToDoList ip ${item} ${name} ${selectProject}`, item);
     
     return await api.post(`${ip}/ToDoList`, {
         ProjectName: selectProject,
         Date: item.setDate,
         Period: item.period,
         Requester: item.requester,
+        ReqManager: item.reqManager,
         Name: name,
         Title: item.title,
         Content: item.content,

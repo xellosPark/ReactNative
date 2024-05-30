@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
+
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const pageNumbersToShow = 5; // Show 5 page numbers at a time

@@ -4,7 +4,7 @@ import { Chip } from "react-native-paper";
 
 const ChipComponent = ({setStatusVal, statusVal}) => {
   const [selectedChip, setSelectedChip] = useState("대기");
-  const [status, setstatus] = useState("");
+  const [status, setstatus] = useState("대기");
 
   //console.log('처음', statusVal);
   const chipOptions = [
@@ -15,7 +15,6 @@ const ChipComponent = ({setStatusVal, statusVal}) => {
   ];
 
   const selectDropDown = (item) => {
-    //console.log('dropdown 선택,', item);
     setStatusVal(item);
   };
   
@@ -28,6 +27,7 @@ const ChipComponent = ({setStatusVal, statusVal}) => {
     
     setChip();
   }, [statusVal]);
+
 
   return (
     <View style={styles.container}>

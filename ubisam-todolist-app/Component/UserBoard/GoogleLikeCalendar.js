@@ -1,11 +1,13 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SubFilterView from './SubFilterView'; 
+import SubFilterView from './SubFilterView';
 import SubEventView from './SubEventView';
 
 import GetUserBoard from '../../API/GetUserBoard';
 import UserContext from '../../API/UseContext/userContext';
+import LoadSubBoard from '../../API/LoadSubBoard';
+import { useFocusEffect } from '@react-navigation/native';
 
 const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -22,12 +24,12 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
   const [eventsByDay, setEventsByDay] = useState({});
 
   const options = [
-    { label: '전체', color: '#CCFFCC', icon: 'checkmark-circle-outline'},
-    { label: '대기', color: '#CCCCFF', icon: 'time-outline'},
-    { label: '전행중', color: '#FFF67E',icon: 'walk-outline'},
-    { label: '완료', color: '#B7E9F7',icon: 'checkmark-done-outline'},
-    { label: '이슈', color: '#FFC0CB',  icon: 'alert-circle-outline'},
-    { label: '알림', color: '#E64F5A', icon: 'alert-circle-outline'}
+    { label: '전체', color: '#CCFFCC', icon: 'checkmark-circle-outline' },
+    { label: '대기', color: '#CCCCFF', icon: 'time-outline' },
+    { label: '전행중', color: '#FFF67E', icon: 'walk-outline' },
+    { label: '완료', color: '#B7E9F7', icon: 'checkmark-done-outline' },
+    { label: '이슈', color: '#FFC0CB', icon: 'alert-circle-outline' },
+    { label: '알림', color: '#E64F5A', icon: 'alert-circle-outline' }
   ];
 
   // 현재 달의 일수와 첫 번째 요일을 계산합니다.
@@ -80,14 +82,14 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
   //       const data = convertDatesInData(event.date);
   //       return data.getDate() === day && data.getMonth() === currentDate.getMonth()
   //     }
-        
+
   //   );
   // };
 
   const getEventsForDay = (year, month, day) => {
     const yearMonthKey = `${year}-${month}`;
-  const eventsInMonth = eventsByDay[yearMonthKey] || {};
-  return eventsInMonth[day] || [];
+    const eventsInMonth = eventsByDay[yearMonthKey] || {};
+    return eventsInMonth[day] || [];
   };
 
   // 오늘 날짜인지 확인합니다.
@@ -115,7 +117,7 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
   const handleDoubleClick = (year, month, day) => {
     const dayEvents = getEventsForDay(year, month, day);  // 특정 날짜에 대한 이벤트를 가져옵니다.
     //console.log('여기확인', dayEvents);  // 해당 날짜의 이벤트를 콘솔에 로그합니다.
-  
+
     // 이벤트가 있는지 확인합니다.
     if (dayEvents.length > 0) {
       setSelectedDayEvents(dayEvents); // 선택된 날의 이벤트를 상태로 설정합니다.
@@ -126,18 +128,6 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
   };
 
   const handleDayClick = (year, month, day) => {
-    // const now = Date.now();
-    // const DOUBLE_PRESS_DELAY = 300; // 밀리세컨드 단위
-
-//     if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
-//       // 이전 클릭 이후 300ms 이내에 클릭이 발생하면 더블 클릭으로 간주합니다.
-//       handleDoubleClick(day);
-//     } else {
-//       // 마지막 클릭 시간을 업데이트합니다.
-// //      setLastTap(now);
-//       setSelectedDay(day); 
-//     }
-
     // 이전에 클릭된 날짜와 현재 클릭된 날짜가 같은지 확인
     if (day === lastClickedDay) {
       // 같은 날짜를 연속해서 클릭하면 더블 클릭으로 간주
@@ -147,7 +137,6 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
       setLastClickedDay(day); // 마지막 클릭된 날짜 저장
       setSelectedDay(day);    // 현재 클릭된 날짜를 선택된 날짜로 설정
     }
-
   };
 
   const convertDatesInData = (data) => {
@@ -158,36 +147,86 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
     return new Date(year, month, day);  // Date 객체로 변환
   }
 
-  useEffect(() => {
-    const LoadUserBoard = async (data) => {
-      const name = data.name;
-     const loadData = await GetUserBoard(name);
-    setLoadData(loadData);
+  const uniqueProject = async (data) => {
+    const uniqueProjects = new Set();
+
+    const processedData = data.map(item => {
+      // Extract the properties you need
+      const { Name, project } = item;
+      return { Name, project };
+    }).filter(item => {
+      // Filter out duplicates based on the 'project' property
+      const isDuplicate = uniqueProjects.has(item.project);
+      uniqueProjects.add(item.project);
+      return !isDuplicate;
+    });
+
+    //    console.log('Unique Project Data', processedData);
+    return processedData;
+
+  };
+
+  const subLoadBoard = async (subdata) => {
+    // Check if subdata is an array and has items
+    if (!Array.isArray(subdata) || subdata.length === 0) {
+      console.log("No subdata provided or subdata is empty");
+      return [];
     }
-    
-    LoadUserBoard(myData);
-  }, [myData.id, myData.name]);
+    const results = await LoadSubBoard(subdata);
+    const _Name = subdata[0].Name;
+    const filteredResults = results.filter(item => item.Name === _Name);
+
+    // Check if there are any filtered results in the first array
+    const dataRows = await filteredResults.map(item => ({
+      title: item.Title,
+      index: item.Index,
+      project: item.ProjectName,
+      date: item.Date,
+      Name: item.Name,
+      content: item.Content,
+      category: item.Status,
+      color: (item.Status === '대기' ? '#CCCCFF' : item.Status === '진행중' ? '#ADD8E6' : item.Status === '완료' ? '#FFD700' : item.Status === '이슈' ? '#FFC0CB' : '#fff'),
+      textColor: '#333'
+    }));
+    return dataRows;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const LoadUserBoard = async (data) => {
+        const name = data.name;
+        const mainData = await GetUserBoard(name); // main 데이터
+
+        const project = await uniqueProject(mainData);
+        const subData = await subLoadBoard(project);
+        const result = [...mainData, ...subData];
+        setLoadData(result);
+      }
+
+      LoadUserBoard(myData);
+    }, [myData.id, myData.name])
+  );
 
 
   useEffect(() => {
     const groupedEvents = {};
-  loadData.forEach(event => {
-    const eventDate = convertDatesInData(event.date);
-  const year = eventDate.getFullYear();
-  const month = eventDate.getMonth() + 1;  // JS의 getMonth()는 0부터 시작하므로 1을 더해줌
-  const day = eventDate.getDate();
-  const yearMonthKey = `${year}-${month}`;
+    loadData.forEach(event => {
+      const eventDate = convertDatesInData(event.date);
+      const year = eventDate.getFullYear();
+      const month = eventDate.getMonth() + 1;  // JS의 getMonth()는 0부터 시작하므로 1을 더해줌
+      const day = eventDate.getDate();
+      const yearMonthKey = `${year}-${month}`;
 
-  if (!groupedEvents[yearMonthKey]) {
-    groupedEvents[yearMonthKey] = {};
-  }
-  if (!groupedEvents[yearMonthKey][day]) {
-    groupedEvents[yearMonthKey][day] = [];
-  }
-  groupedEvents[yearMonthKey][day].push(event);
-  });
+      if (!groupedEvents[yearMonthKey]) {
+        groupedEvents[yearMonthKey] = {};
+      }
+      if (!groupedEvents[yearMonthKey][day]) {
+        groupedEvents[yearMonthKey][day] = [];
+      }
+      groupedEvents[yearMonthKey][day].push(event);
+    });
 
-  setEventsByDay(groupedEvents);
+    setEventsByDay(groupedEvents);
   }, [loadData])
 
   return (
@@ -211,7 +250,7 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
         <SubFilterView
           visible={dialogVisible}
           onClose={() => setDialogVisible(false)}
-          onConfirm={handleConfirm} 
+          onConfirm={handleConfirm}
           options={options}
         />
         <SubEventView
@@ -219,41 +258,43 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
           events={selectedDayEvents}
           onClose={() => setShowEventModal(false)}
         />
-                
+
       </View>
       <View style={styles.calendarContainer}>
         <View style={styles.headerRow}>
           {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
-            <Text key={day} style={[styles.headerCell,{color: index === 0 ? "red" : index === 6 ? "blue" : "black",},]}>
+            <Text key={day} style={[styles.headerCell, { color: index === 0 ? "red" : index === 6 ? "blue" : "black", },]}>
               {day}
             </Text>
           ))}
         </View>
         <View style={styles.daysContainer} >
           {trailingDays.map((day, index) => (
-            <View key={`prev-${day}`} style={[ styles.dayCell,{ width: cellWidth, height: cellHeight, opacity: 0.5 },]}>
-              <Text style={[ styles.dayNumber,{color: index === 0 ? "red" : index === 6 ? "blue" : "black",},]}>
+            <View key={`prev-${day}`} style={[styles.dayCell, { width: cellWidth, height: cellHeight, opacity: 0.5 },]}>
+              <Text style={[styles.dayNumber, { color: index === 0 ? "red" : index === 6 ? "blue" : "black", },]}>
                 {day}
               </Text>
             </View>
           ))}
           {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
             //<View key={day} style={[styles.dayCell,{width: cellWidth,height: cellHeight,backgroundColor: isToday(day) ? "#FFF67E" : "transparent",},]}>
-            <TouchableOpacity key={day} style={[styles.dayCell,{width: cellWidth,height: cellHeight,backgroundColor: isToday(day) ? "#FFF67E" : "transparent",
-              borderColor: selectedDay === day ? 'blue' : 'lightgrey', borderWidth: selectedDay === day ? 1 : 1, },]}
+            <TouchableOpacity key={day} style={[styles.dayCell, {
+              width: cellWidth, height: cellHeight, backgroundColor: isToday(day) ? "#FFF67E" : "transparent",
+              borderColor: selectedDay === day ? 'blue' : 'lightgrey', borderWidth: selectedDay === day ? 1 : 1,
+            },]}
               onPress={() => handleDayClick(currentDate.getFullYear(), currentDate.getMonth() + 1, day)}  // 다음 달의 날짜 클릭 처리
             >
               <Text style={[styles.dayNumber, { color: getColorByDay(day) }]}>
                 {day}
               </Text>
-                {getEventsForDay(currentDate.getFullYear(), currentDate.getMonth() + 1, day)
+              {getEventsForDay(currentDate.getFullYear(), currentDate.getMonth() + 1, day)
                 .slice(0, 2)
                 .map((event, index) => (
-                  <View key={index} style={[ styles.eventLabel, { backgroundColor: event.color },]}>
-                    <Text style={styles.eventText}>{event.title}</Text>
+                  <View key={index} style={[styles.eventLabel, { backgroundColor: event.color },]}>
+                    <Text style={styles.eventText}>{event.title.length > 15 ? event.title.slice(0, 15) + "..." : event.title}</Text>
                   </View>
                 ))}
-                {getEventsForDay(currentDate.getFullYear(), currentDate.getMonth() + 1, day).length > 2 && (
+              {getEventsForDay(currentDate.getFullYear(), currentDate.getMonth() + 1, day).length > 2 && (
                 <Text style={styles.moreEventsText}> + {getEventsForDay(currentDate.getFullYear(), currentDate.getMonth() + 1, day).length - 2} more </Text>
               )}
             </TouchableOpacity>
@@ -274,7 +315,7 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
                   },
                 ]}
               >
-              {day}
+                {day}
               </Text>
             </View>
           ))}
@@ -287,7 +328,7 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
 const styles = StyleSheet.create({
 
   scrollViewContent: {
-    
+
     justifyContent: 'center',
   },
   header: {
@@ -348,7 +389,7 @@ const styles = StyleSheet.create({
   },
   eventText: {
     color: 'black',
-    fontSize: 10
+    fontSize: 9
   },
   moreEventsText: {
     color: 'grey',

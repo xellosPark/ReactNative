@@ -11,9 +11,7 @@ const FlowingText = ({selectProject}) => {
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    console.log('애니메이션 ', list?.length);
     if (list.length <= 0) return;
-    console.log('애니메이션 시작', list?.length);
 
     const startAnimation = () => {
       // 애니메이션을 시작하기 전에 translateX 값을 screenWidth로 부드럽게 리셋
@@ -46,7 +44,6 @@ const FlowingText = ({selectProject}) => {
         id: index,
         title: item.Content
       }));
-      console.log('loadKanbanList', data);
       setList(data);
     };
     loadKanbanList();

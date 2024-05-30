@@ -38,6 +38,7 @@ const HomeScreen = ({ navigation }) => {
   const showAddDialog = () => setVisibleAdd(true);
   const hideAddDialog = () => {
     setVisibleAdd(false);
+    setShowModifyButton(false);
     handleLoadBoard();
   }
 
@@ -46,8 +47,10 @@ const HomeScreen = ({ navigation }) => {
     //return;
     setVisibleModify(true);
   }
+
   const hideModifyDialog = () => {
     setVisibleModify(false);
+    setShowModifyButton(false);
     handleLoadBoard();
   };
 
@@ -137,42 +140,50 @@ const HomeScreen = ({ navigation }) => {
 
   // 새로고침 함수 정의
   const onRefresh = async () => {
-    setRefreshing(true);
+    if (visibleAdd === true) {
+      setRefreshing(true);
+    }
+
     await handleLoadBoard(); // 게시판 데이터를 다시 불러옵니다.
     setRefreshing(false); // 새로고침 상태를 false로 설정합니다.
   };
 
   const parseData = async (data, subData) => {
+    //console.log('data',data);
     if (subData === undefined) {
       return await data;
     }
     await subData.forEach(detail => {
       // 해당 targetIndex를 가진 객체를 찾습니다.
       let item = data.find(item => item.Key === detail.FieldNum);
-      if (item.Key === 364) {
+      //console.log('ghhkrdls', data);
+      //console.log('확인 158', data.Key, detail.FieldNum);
+      if (item.Key === 266) {
+        //console.log('item 266', item);
       }
       if (item) {
-          // details 속성이 없다면 초기화합니다.
-          if (!item.details) {
-              item.details = [JSON.parse(JSON.stringify(item))]; //status 업데이트를 위해 복사해서 초기화함
-          }
-          // details 배열에 상세 정보를 추가합니다. targetIndex는 제외합니다.
-          item.details.push({
-              Index: detail.Index,
-              ProjectName: detail.ProjectName,
-              Date: detail.Date,
-              ChangeDate: detail.ChangeDate,
-              Name: detail.Name,
-              Title: detail.Title,
-              Content: detail.Content,
-              Status: detail.Status,
-              FieldNum: detail.FieldNum,
-              FieldSubNum: detail.FieldSubNum,
-          });
-          item.details[0].Status = item.details[item.details.length - 1].Status;
+        // details 속성이 없다면 초기화합니다.
+        if (!item.details) {
+          item.details = [JSON.parse(JSON.stringify(item))]; //status 업데이트를 위해 복사해서 초기화함
+        }
+        // details 배열에 상세 정보를 추가합니다. targetIndex는 제외합니다.
+        item.details.push({
+          Index: detail.Index,
+          //Key: detail.Index,
+          ProjectName: detail.ProjectName,
+          Date: detail.Date,
+          ChangeDate: detail.ChangeDate,
+          Name: detail.Name,
+          Title: detail.Title,
+          Content: detail.Content,
+          Status: detail.Status,
+          FieldNum: detail.FieldNum,
+          FieldSubNum: detail.FieldSubNum,
+        });
+        item.details[0].Status = item.details[item.details.length - 1].Status;
       }
-  });
-  return await data;
+    });
+    return await data;
   }
 
   useEffect(() => {
@@ -188,7 +199,7 @@ const HomeScreen = ({ navigation }) => {
       if (!val.payload) {
         return
       }
-      await myData.setValue(val.payload);
+      await myData.setValue(val.payload); //UserInfo 로 변경하기
     }
     loadData();
     return () => clearTimeout(timer);
@@ -215,19 +226,19 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const loadBoard = async () => {
       await handleLoadBoard();
+      setFilterName('전체');
     }
     loadBoard();
   }, [selectProject])
-
 
   return (
     <Provider>
       <SafeAreaView style={styles.container}>
         <>
           <ProjectDropdowm selectProject={selectProject} userInfo={userInfo} option={option} handleOption={handleOption} />
-          <BoardState board={board} setFilterName={setFilterName} />
+          <BoardState board={board} setFilterName={setFilterName} selectProject={selectProject} />
           <FlowingText selectProject={selectProject} />
-          <MainBoard board={board} toggleModifyButton={toggleModifyButton} filterName={filterName}
+          <MainBoard board={board} toggleModifyButton={toggleModifyButton} filterName={filterName} selectProject={selectProject}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

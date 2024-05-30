@@ -5,17 +5,12 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform,
-  ScrollView,
-  Alert,
-  TouchableWithoutFeedback
 } from "react-native";
 import Pagination from "./Page/Pagination";
-import FloatingButton from "../Layouts/MainView/FloatingButton/FloatingButton";
 
 const ITEMS_PER_PAGE = 5;
 
-const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) => {
+const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName, selectProject }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState([]);
   const [boardData, setBoard] = useState([]);
@@ -23,15 +18,16 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
 
   const [selectedTab, setSelectedTab] = useState('전체');
   const [tab, setTab] = useState([]);
-  //const [filterName, setFilterName] = useState('전체');
+  const [filteredName, setFilteredName] = useState('전체');
   const handleTabSelection = async (tabs) => {
-    setSelectedTab(tabs);
-    //console.log('handleTabSelection 29', tabs, filterName);
+    setSelectedTab(tabs); //이름
+    setCurrentPage(1);
+    //console.log('handleTabSelection 29', tabs, filterName, filteredName);
     if (tabs === '전체') {
       if (filterName === '전체') {
         await setChangeData(boardData);
       } else {
-        OnFilterName(tabs);
+        await OnFilterName(tabs);
       }
       
     }
@@ -39,44 +35,15 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
       if (filterName === '전체') {
         await filterData(tabs);
       } else {
-        OnFilterName(tabs);
+        await OnFilterName(tabs);
       }
     }
   };
 
   const setData = async () => {
-    // const data = Array.from({ length: board.length }, (_, i) => {
-    //   const item = board[i];
-    //   if (item.details && item.details.length > 0) {
-    //     return {
-    //       id: i + 1,
-    //       key: item.Key,
-    //       content: item?.Content === undefined ? "" : item.Content,
-    //       date: item?.Date,
-    //       changedate: item?.ChangeDate,
-    //       name: item?.Name,
-    //       title: item?.Title,
-    //       status: item?.Status,
-    //       details: item?.details,
-    //     };
-    //   }
-    //   else {
-    //     return {
-    //       id: i + 1,
-    //       key: item.Key,
-    //       content: item?.Content === undefined ? "" : item.Content,
-    //       date: item?.Date,
-    //       changedate: item?.ChangeDate,
-    //       name: item?.Name,
-    //       title: item?.Title,
-    //       status: item?.Status,
-    //     };
-    //   }
-      
-    // });
     const transformedData = board.map((item, i) => {
       const baseItem = {
-          id: i + 1,
+          id: item.Index,
           key: item?.Key,
           content: item?.Content || "",
           date: item?.Date,
@@ -84,6 +51,8 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
           name: item?.Name,
           title: item?.Title,
           status: item?.Status,
+          Requester: item?.Requester,
+          ReqManager: item?.ReqManager,
       };
       if (item.details && item.details.length > 0) {
           return {
@@ -100,49 +69,54 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
     // 먼저 '전체'를 포함하는 배열 생성
     const initialTabs = ['전체'];
     // 데이터에서 이름 추출 후 중복 제거
-    const naneTab = new Set(transformedData.map(item => item.name));
-    await setTab([...initialTabs, ...naneTab]);
+    const nameTab = new Set(transformedData.map(item => item.name));
+    await setTab([...initialTabs, ...nameTab]);
     
   };
 
   const filterData = async (tabItem) => {
     //console.log('filterName 63', filterName, tab, boardData);
     const data = await boardData.filter(item => item.name === tabItem);
-    console.log('filter data', data);
     await setChangeData(data);
   };
 
   const OnFilterName =  async (tabs) => {
-    //console.log('OnFilterName 81', filterName);
     let data =[];
-    ///////////////
-    ///데이터 일부 사라져있음 다시 확인할 필요있음 78787878
-    //////////////
-    const Data = await boardData.filter(item => item.status === filterName);
+    const Data = await boardData.filter(item => {
+      // details가 존재하고 길이가 0보다 크면, 마지막 details의 Status를 확인
+      if (item.details && item.details.length > 0) {
+          return item.details[item.details.length - 1].Status === filterName;
+      }
+      // 그렇지 않으면, item의 Status만 확인
+      return item.status === filterName;
+    });
+    
+    
+    ////name비교
     if (tabs === '전체') {
-      //console.log('여기 85');
       data = Data;
     } else {
       data = await Data.filter(item => item.name === tabs);
     }
-    
     //console.log('OnFilterName 91', filterName, tabs);
     await setChangeData(data);
   }
 
   useEffect(() => {
-    //console.log('MainBoard 95', );
     setData();
     setSelectedTab('전체');
+    setFilteredName('전체');
   }, [board]);
 
   useEffect(() => {
-    //setData();
-    //filterData(tab);
-    //console.log('filterName 변경', filterName);
-    setSelectedTab('전체');
-    handleTabSelection('전체');
-    
+    const tabSelection = async () => {
+      await setFilteredName(filterName);
+      await setSelectedTab('전체');
+      await setCurrentPage(1);
+      await handleTabSelection('전체');
+    }
+    tabSelection();
+
   }, [filterName]);
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -188,7 +162,7 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
           <View style={styles.row}>
             <View style={styles.contentColumn}>
               <Text style={[styles.title, styles.titleSpacing]}>
-                {`${item.key} | ${
+                {`${item.id} | ${
                   item.title.length > 25 ? item.title.slice(0, 25) + "..." : item.title
                 }`}
               </Text>
@@ -200,7 +174,7 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
               >
                 {item.content}
               </Text>
-              {item.content?.length > 100 && (
+              {item.content?.length > 60 && (
                 <TouchableOpacity onPress={() => toggleExpand(item.id)}>
                   <Text style={styles.moreButton}>
                     {expandedItems.includes(item.id) ? "접기" : "더 보기"}
@@ -210,14 +184,15 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName }) =>
             </View>
             <View style={styles.todoColumn}>
               <View style={styles.subcontainer}>
-                <Text style={styles.subcontainer}>{item.date}</Text>
+                <Text style={styles.subcontainer}>
+                  {item.changedate === null ? item.date : item.changedate}</Text>
                 <Text
                   style={[
                     styles.status,
-                    { backgroundColor: getStatusColor(item.status) },
+                    { backgroundColor: getStatusColor(item.details === undefined ? item.status : item.details[0].Status) },
                   ]}
                 >
-                  {item.status}
+                  {item.details === undefined ? item.status : item.details[0].Status}
                 </Text>
               </View>
             </View>

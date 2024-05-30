@@ -20,19 +20,11 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
 
   const [title, setTitle] = useState("");
   const [period, setPeriod] = useState("1일");
-  const [statusVal, setStatusVal] = useState("대기");
-  const [oldStatusVal, setOldStatusVal] = useState("대기");
+  const [statusVal, setStatusVal] = useState("");
+  const [oldStatusVal, setOldStatusVal] = useState("");
   const [subRows, setSubRows] = useState([]);
-
-  const [events, setEvents] = useState([
-    { id: 1, date: new Date(2024, 4, 7), color: "#CCFFCC", title: "Event 1", content: "2024/05/01 - 내용 12345678901234567890123456789121231233543534521312312321312312321012345678901234567890" },
-    { id: 2, date: new Date(2024, 4, 7), color: "#CCCCFF", title: "Event 2", content: "2024/05/02 - 내용2" },
-    { id: 3, date: new Date(2024, 4, 7), color: "#FFF67E", title: "Event 2", content: "2024/05/03 - 내용3" },
-    { id: 4, date: new Date(2024, 4, 7), color: "#B7E9F7", title: "Event 2", content: "2024/05/04 - 내용4" },
-    { id: 5, date: new Date(2024, 4, 8), color: "#FFC0CB", title: "Event 2", content: "2024/05/05 - 내용5" },
-    { id: 6, date: new Date(2024, 4, 8), color: "#FFFFCC", title: "Event 3", content: "2024/05/06 - 내용6" },
-
-  ]);
+  const [requester, setRequester] = useState("");
+  const [reqManager, setReqManager] = useState("");
 
   const toggleNumberOfLines = () => {
     setIsExpanded(!isExpanded);
@@ -48,11 +40,11 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
       status: statusVal,
       content: dataValue
     };
-    console.log('handleAdd 24', item);
+    //console.log('handleAdd 24', item);
 
     if (item.setDate !== data.date) {
       let subNum = 0;
-
+      //console.log('.들어옴?');
       const _ProjectName = selectProject.replace(/ /g, '_');
       const index = _ProjectName.indexOf('(');
       if (index !== -1) {
@@ -60,14 +52,11 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
       }
       else project = _ProjectName; // '(' 기호가 없는 경우, 전체 텍스트 반환
 
-      console.log('Modify 63', subRows[subRows.length - 1]);
       if (subRows.length > 0) { // sub 게시물이 추가되어 있고 날짜가 다르다면 새로운 sub게시물 추가
-        console.log('Modify 65', subRows[subRows.length - 1].Date, setDate);
         if (subRows[subRows.length - 1].Date !== setDate) {
           subNum = subRows[subRows.length - 1].FieldSubNum + 1;
           result = await AddSubEdit(item, name, selectProject, project, subNum);// - 추가 필요
         } else { // sub 게시물이 추가되어 있고 날짜가 같으면 해당 sub 업데이트
-          console.log('업데이트 진행 70');
           subNum = subRows[subRows.length - 1].FieldSubNum;
           result = await UpdateSubEdit(item, name, selectProject, project, subNum, subRows[subRows.length - 1].Index);// - 추가 필요
         }
@@ -80,7 +69,6 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
       //await UpdateDate(item, name, selectProject);
     } else {
       //내용 업데이트
-      console.log('같은 날짜 업데이트', item);
       result = await UpdateTodoList(item, name, selectProject);
     }
 
@@ -96,6 +84,8 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
   const initTodoList = () => {
     setTitle("");
     setStatusVal("");
+    setReqManager("");
+    setRequester("");
     setDataValue(formattedDate);
     setSubRows([]);
   }
@@ -107,18 +97,19 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
 
   useEffect(() => {
     const setInitData = async () => {
-      //console.log('edit data', data);
       if (data?.details === undefined) {
         await setTitle(data.title);
         await setDataValue(data.content);
         await setPeriod(data.period);
         await setStatusVal(data.status);
         await setOldStatusVal(data.status);
+        await setReqManager(data.ReqManager);
+        await setRequester(data.Requester);
         await setSubRows([]);
       } else {
         if (data?.details.length > 0) {
-          const { Index, Key, ProjectName, date, changedate, Name, Title, content, Status, Period, Requester, details } = data;
-          const parentRow = { Index, Key, ProjectName, date, changedate, Name, Title, content, Status, Period, Requester };
+          const { Index, Key, ProjectName, Date, Changedate, Name, Title, Content, Status, Period, Requester, ReqManager, details } = data;
+          const parentRow = { Index, Key, ProjectName, Date, Changedate, Name, Title, Content, Status, Period, Requester, ReqManager };
           //이렇게 했는데도 나오지 않는 데이터 있음
           //const { index, key, projectName, date, changedate, name, title, content, status, period, requester, details } = data;
           //const parentRow = { index, key, projectName, date, changedate, name, title, content, status, period, requester };
@@ -126,11 +117,17 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
           setTitle(data?.details[data.details.length - 1].Title);
           if (data?.details[data.details.length - 1].Date === setDate) {
             setDataValue(data?.details[data.details.length - 1].Content);
+          } else {
+            setDataValue(formattedDate);
           }
+          //console.log('shos', data?.details[data.details.length - 1].Status);
           setStatusVal(data?.details[data.details.length - 1].Status);
           setOldStatusVal(data?.details[data.details.length - 1].Status);
-          const newSubRows = [parentRow, ...details];
+          const newSubRows = [...details];
           setSubRows(newSubRows);
+
+          await setReqManager(data.ReqManager);
+          await setRequester(data.Requester);
         }
       }
     };
@@ -157,6 +154,26 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
               placeholder="제목을 적어주세요"
               onChangeText={setTitle}
             />
+          </View>
+          <View style={styles.inputGroup}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>요청자</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setRequester}
+                value={requester}
+                readOnly
+              />
+            </View>
+            <View style={[styles.inputContainer, { marginLeft: 5 }]}>
+              <Text style={styles.label}>요청 담당자</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setReqManager}
+                value={reqManager}
+                readOnly
+              />
+            </View>
           </View>
 
           <View style={styles.inputContainer}>
@@ -195,7 +212,7 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
               value={dataValue}
               onChangeText={setDataValue}
               placeholder="YYYY/MM/DD - " // 사용자를 위한 플레이스홀더 텍스트
-              numberOfLines={5} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
+              numberOfLines={12} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
             />
           </View>
           <View style={styles.buttonContainer}>
@@ -220,10 +237,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.4)", // Semi-transparent background
   },
   modalView: {
-    margin: 20,
+    width: '95%',
     backgroundColor: "#EEEE",
     borderRadius: 20,
-    padding: 25,
+    padding: 15,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -232,9 +249,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5
-  },
-  dialog: {
-    width: "100%",
   },
   inputContainer: {
     marginVertical: 4,
@@ -262,7 +276,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
-    height: 150,
+    height: 200,
     textAlign: 'left',
     textAlignVertical: 'top',
   },
@@ -291,29 +305,38 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     borderWidth: 1,
-    padding: 2,
+    padding: 3,
     borderRadius: 4,
     maxHeight: 150,
   },
   colorIndicator: {
-    width: 15,
-    height: 15,
     borderRadius: 20,
-    marginRight: 8,
   },
   eventContainer: {
     flexDirection: 'column',
     alignItems: 'left',
-    marginBottom: 1,
   },
   eventContent: {
     flex: 1,
-    marginRight: 8,
+    marginHorizontal: 3,
+    marginBottom: 2,
   },
   moreButton: {
     fontWeight: 'bold',
     color: '#1E90FF',
+    marginBottom: 2,
   },
+  inputGroup: {
+    flexDirection: 'row', // 요소들을 가로로 나열
+  },
+  input: {
+    width: 120,
+    borderWidth: 1,
+    borderColor: '#222',
+    padding: 8,
+    borderRadius: 4,
+    color: '#2e2e2e',
+  }
 
 });
 

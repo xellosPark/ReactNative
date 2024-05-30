@@ -66,7 +66,7 @@ api.interceptors.request.use(
           config.headers['Authorization'] = `Bearer ${token}`;
           //console.log("헤더에 토큰 첨부됨");
         } else {
-          console.log("토큰이 만료됨");
+          console.log("토큰이 만료됨 69");
           const newToken = await refreshTokenAndRetryRequest(config);
           if (newToken) {
               config.headers['Authorization'] = `Bearer ${newToken}`;
@@ -99,6 +99,8 @@ api.interceptors.response.use( response => response, // 에러가 없는 모든 
       return refreshTokenAndRetryRequest(originalRequest); // 토큰을 새로 고치고 원래 요청을 다시 시도하는 함수를 호출
     }
     console.log("오류 발생 84");
+    //await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+    //console.log("저장된 accessToken, refreshToken 삭제 105");
     return Promise.reject(error); // 403 에러가 아닌 경우, 프로미스를 거부함
   }
 );
@@ -108,8 +110,6 @@ async function refreshTokenAndRetryRequest(originalRequest) {
   try {
     console.log("refreshTokenAndRetryRequest 92 재발급");
     const refreshToken = await AsyncStorage.getItem('refreshToken'); // 저장소에서 리프레시 토큰을 검색
-    console.log("refreshToken 94",refreshToken);
-    console.log("refreshToken 95",api.defaults.baseURL);
     const { data } = await axios.post(`${api.defaults.baseURL}/refresh`, { refreshToken }); // 리프레시 토큰을 사용해 액세스 토큰을 새로 고침
     console.log("refreshToken 96",data);
     const { accessToken } = data; // 응답에서 새 액세스 토큰 추출
@@ -119,6 +119,8 @@ async function refreshTokenAndRetryRequest(originalRequest) {
   } catch (refreshError) {
     console.log('토큰 새로 고침 실패:'); // 토큰 새로 고침 과정에서 발생한 오류 로그
     console.error('토큰 새로 고침 실패:', refreshError); // 토큰 새로 고침 과정에서 발생한 오류 로그
+    await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+    console.log("저장된 accessToken, refreshToken 삭제 125");
     return Promise.reject(refreshError); // 토큰 새로 고침 실패 시, 프로미스를 거부함
   }
 }
