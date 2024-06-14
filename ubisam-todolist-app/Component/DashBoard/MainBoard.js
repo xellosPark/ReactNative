@@ -48,6 +48,7 @@ const MainBoard = ({ board, toggleModifyButton, refreshControl, filterName, sele
           content: item?.Content || "",
           date: item?.Date,
           changedate: item?.ChangeDate,
+          projectName: selectProject,
           name: item?.Name,
           title: item?.Title,
           status: item?.Status,

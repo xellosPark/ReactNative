@@ -1,5 +1,5 @@
 import React, { useDebugValue, useEffect, useState } from "react";
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Modal, ScrollView } from "react-native";
+import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import ChipComponent from "./ChipComponent";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Picker } from '@react-native-picker/picker';
@@ -25,6 +25,7 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
   const [subRows, setSubRows] = useState([]);
   const [requester, setRequester] = useState("");
   const [reqManager, setReqManager] = useState("");
+  const [index, setIndex] = useState('');
 
   const toggleNumberOfLines = () => {
     setIsExpanded(!isExpanded);
@@ -66,7 +67,7 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
         result = await AddSubEdit(item, name, selectProject, project, subNum);
       }
 
-      //await UpdateDate(item, name, selectProject);
+      await UpdateDate(item, name, selectProject);
     } else {
       //내용 업데이트
       result = await UpdateTodoList(item, name, selectProject);
@@ -97,17 +98,18 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
 
   useEffect(() => {
     const setInitData = async () => {
-      if (data?.details === undefined) {
+      if (data?.date === setDate && data?.details === undefined) {
         await setTitle(data.title);
         await setDataValue(data.content);
         await setPeriod(data.period);
         await setStatusVal(data.status);
         await setOldStatusVal(data.status);
+        setIndex(data?.index);
         await setReqManager(data.ReqManager);
         await setRequester(data.Requester);
         await setSubRows([]);
       } else {
-        if (data?.details.length > 0) {
+        if (data?.details?.length > 0) {
           const { Index, Key, ProjectName, Date, Changedate, Name, Title, Content, Status, Period, Requester, ReqManager, details } = data;
           const parentRow = { Index, Key, ProjectName, Date, Changedate, Name, Title, Content, Status, Period, Requester, ReqManager };
           //이렇게 했는데도 나오지 않는 데이터 있음
@@ -123,8 +125,27 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
           //console.log('shos', data?.details[data.details.length - 1].Status);
           setStatusVal(data?.details[data.details.length - 1].Status);
           setOldStatusVal(data?.details[data.details.length - 1].Status);
+          setIndex(data?.details[data.details.length - 1].Index);
           const newSubRows = [...details];
           setSubRows(newSubRows);
+
+          await setReqManager(data.ReqManager);
+          await setRequester(data.Requester);
+        } else {
+          const { Index, Key, ProjectName, Date, Changedate, Name, Title, Content, Status, Period, Requester, ReqManager, details } = data;
+          const parentRow = { Index: data.id, Key : data.key, ProjectName : data.ProjectName, Date : data.date, Changedate : data.changedate,
+             Name : data.name, Title : data.title, Content : data.content, Status : data.status, Period : data.period, Requester, ReqManager };
+
+          setTitle(data?.title);
+          if (data?.date === setDate) {
+            setDataValue(data?.content);
+          } else {
+            setDataValue(formattedDate);
+          }
+          setStatusVal(data?.status);
+          setOldStatusVal(data?.status);
+          setIndex(data?.index);
+          setSubRows([parentRow]);
 
           await setReqManager(data.ReqManager);
           await setRequester(data.Requester);
@@ -141,90 +162,95 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
       visible={visibleModify}
       onRequestClose={onDismiss}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.title}>
-            ToDo Edit
-            <Icon name="favorite" color="#FF69B4" size={16} />
-          </Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>제목</Text>
-            <TextInput
-              style={styles.textInput} multiline={true} value={title}
-              placeholder="제목을 적어주세요"
-              onChangeText={setTitle}
-            />
-          </View>
-          <View style={styles.inputGroup}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.centeredView}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.title}>
+              ToDo Edit
+              <Icon name="favorite" color="#FF69B4" size={16} />
+            </Text>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>요청자</Text>
+              <Text style={styles.label}>제목</Text>
               <TextInput
-                style={styles.input}
-                onChangeText={setRequester}
-                value={requester}
-                readOnly
+                style={styles.textInput} multiline={true} value={title}
+                placeholder="제목을 적어주세요"
+                onChangeText={setTitle}
               />
             </View>
-            <View style={[styles.inputContainer, { marginLeft: 5 }]}>
-              <Text style={styles.label}>요청 담당자</Text>
+            <View style={styles.inputGroup}>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>요청자</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setRequester}
+                  value={requester}
+                  readOnly
+                />
+              </View>
+              <View style={[styles.inputContainer, { marginLeft: 5 }]}>
+                <Text style={styles.label}>요청 담당자</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setReqManager}
+                  value={reqManager}
+                  readOnly
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>상태 표시</Text>
+              <View style={styles.dropdown}>
+                {statusVal && <ChipComponent setStatusVal={setStatusVal} statusVal={statusVal} />}
+              </View>
+            </View>
+            {subRows?.length > 0 && (
+              <>
+                <Text style={styles.label}>진행 내용</Text>
+                <ScrollView style={styles.scrollView}>
+                  {subRows.map((event, index) => (
+                    <View key={`${event.Index}_${index}`} style={styles.eventContainer}>
+                      <View style={[styles.colorIndicator, { backgroundColor: event.color },]} />
+                      {/* <Text style={styles.eventContent}>{event.content}</Text> */}
+                      <Text style={styles.eventContent} numberOfLines={isExpanded ? 0 : 2}>
+                        {event.Content}
+                      </Text>
+                      {event.Content?.length > 100 && (
+                        <TouchableOpacity onPress={toggleNumberOfLines}>
+                          <Text style={styles.moreButton}>{isExpanded ? "접기🔼" : "더 보기🔽"}</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  ))}
+                </ScrollView>
+              </>
+            )}
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>내용</Text>
               <TextInput
-                style={styles.input}
-                onChangeText={setReqManager}
-                value={reqManager}
-                readOnly
+                style={styles.textArea}
+                multiline={true} // 여러 줄 입력 가능하게 설정
+                value={dataValue}
+                onChangeText={setDataValue}
+                placeholder="YYYY/MM/DD - " // 사용자를 위한 플레이스홀더 텍스트
+                numberOfLines={12} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
               />
             </View>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>상태 표시</Text>
-            <View style={styles.dropdown}>
-              {statusVal && <ChipComponent setStatusVal={setStatusVal} statusVal={statusVal} />}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={handleAdd} style={styles.addButton}>
+                <Text style={styles.buttonText}>Add</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
             </View>
           </View>
-          {subRows?.length > 0 && (
-            <>
-              <Text style={styles.label}>진행 내용</Text>
-              <ScrollView style={styles.scrollView}>
-                {subRows.map((event, index) => (
-                  <View key={`${event.Index}_${index}`} style={styles.eventContainer}>
-                    <View style={[styles.colorIndicator, { backgroundColor: event.color },]} />
-                    {/* <Text style={styles.eventContent}>{event.content}</Text> */}
-                    <Text style={styles.eventContent} numberOfLines={isExpanded ? 0 : 2}>
-                      {event.Content}
-                    </Text>
-                    {event.Content?.length > 100 && (
-                      <TouchableOpacity onPress={toggleNumberOfLines}>
-                        <Text style={styles.moreButton}>{isExpanded ? "접기🔼" : "더 보기🔽"}</Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                ))}
-              </ScrollView>
-            </>
-          )}
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>내용</Text>
-            <TextInput
-              style={styles.textArea}
-              multiline={true} // 여러 줄 입력 가능하게 설정
-              value={dataValue}
-              onChangeText={setDataValue}
-              placeholder="YYYY/MM/DD - " // 사용자를 위한 플레이스홀더 텍스트
-              numberOfLines={12} // iOS에서 고정된 줄 수를 제안, Android에서는 스크롤 가능
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={handleAdd} style={styles.addButton}>
-              <Text style={styles.buttonText}>Add</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
-              <Text style={styles.buttonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -232,12 +258,15 @@ const ModifyModalComponent = ({ data, name, selectProject, visibleModify, onDism
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: 'center',
     backgroundColor: "rgba(0, 0, 0, 0.4)", // Semi-transparent background
   },
-  modalView: {
+  scrollContainer: {
     width: '95%',
+    marginTop: 3,
+  },
+  modalView: {
     backgroundColor: "#EEEE",
     borderRadius: 20,
     padding: 15,
@@ -248,7 +277,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
+    minWidth: '100%',
+    maxWidth: '100%',
   },
   inputContainer: {
     marginVertical: 4,
@@ -276,7 +307,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
-    height: 200,
+    height: 250,
     textAlign: 'left',
     textAlignVertical: 'top',
   },

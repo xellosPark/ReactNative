@@ -244,15 +244,15 @@ const GoogleLikeCalendar = ({ cellWidth = "14.28%", cellHeight = 110 }) => {
         <TouchableOpacity onPress={() => setCurrentDate(new Date())}>
           <Text style={styles.headerToday}>Today</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setDialogVisible(true)}>
+        {/* <TouchableOpacity onPress={() => setDialogVisible(true)}>
           <Icon name="options-outline" size={30} color="#e2e2e2" />
-        </TouchableOpacity>
-        <SubFilterView
+        </TouchableOpacity> */}
+        {/* <SubFilterView
           visible={dialogVisible}
           onClose={() => setDialogVisible(false)}
           onConfirm={handleConfirm}
           options={options}
-        />
+        /> */}
         <SubEventView
           visible={showEventModal}
           events={selectedDayEvents}

@@ -73,14 +73,19 @@ const HomeScreen = ({ navigation }) => {
     setSelectProject(item);
   }
 
-  const handleLoadUserInfo = async () => {
-    if (myData.id === null) {
+  const handleLoadUserInfo = async (id) => {
+    // if (myData.id === null) {
+    //   return;
+    // }
+    // if (myData.name === null) { //'' 이거는 소용 x
+    //   return;
+    // }
+    //const data = await UserInfo(myData.id, myData.name);
+    if (id === null || id === undefined || id === "") {
       return;
     }
-    if (myData.name === null) { //'' 이거는 소용 x
-      return;
-    }
-    const data = await UserInfo(myData.id, myData.name);
+
+    const data = await UserInfo(id);
     if (data === undefined) return;
     await setUserInfo(data);
     return data;
@@ -156,11 +161,7 @@ const HomeScreen = ({ navigation }) => {
     await subData.forEach(detail => {
       // 해당 targetIndex를 가진 객체를 찾습니다.
       let item = data.find(item => item.Key === detail.FieldNum);
-      //console.log('ghhkrdls', data);
-      //console.log('확인 158', data.Key, detail.FieldNum);
-      if (item.Key === 266) {
-        //console.log('item 266', item);
-      }
+
       if (item) {
         // details 속성이 없다면 초기화합니다.
         if (!item.details) {
@@ -199,22 +200,26 @@ const HomeScreen = ({ navigation }) => {
       if (!val.payload) {
         return
       }
-      await myData.setValue(val.payload); //UserInfo 로 변경하기
-    }
-    loadData();
-    return () => clearTimeout(timer);
-  });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      loadUserInfo();
-    }, 500);
-    const loadUserInfo = async () => {
-      const userData = await handleLoadUserInfo();
+      const userData = await handleLoadUserInfo(val.payload.id);
+      const value = {id: userData.email, name:userData.name};
+      await myData.setValue(value); //UserInfo 로 변경하기
     }
-    loadUserInfo();
     return () => clearTimeout(timer);
-  }, [myData.id, myData.name]);
+  }, []);
+
+    //useEffect(() => {
+    // const timer = setTimeout(() => {
+    //   loadUserInfo();
+    // }, 500);
+    // const loadUserInfo = async () => {
+
+    //   const userData = await handleLoadUserInfo();
+    // }
+    // loadUserInfo();
+    // return () => clearTimeout(timer);
+    //   console.log('아이디 정보',myData.id, myData.name);
+    // }, [myData.id, myData.name]);
 
   useEffect(() => {
     const projectInfo = async () => {

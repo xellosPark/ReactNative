@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import ChipComponent from "./ChipComponent";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Picker } from '@react-native-picker/picker';
@@ -80,7 +80,11 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
       visible={visibleAdd}
       onRequestClose={onDismiss}
     >
-      <View style={styles.centeredView}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.centeredView}
+      >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.modalView}>
           <Text style={styles.title}>
             To Do List
@@ -152,7 +156,8 @@ const ModalComponent = ({ visibleAdd, onDismiss, name, selectProject }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -164,8 +169,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.4)", // Semi-transparent background
   },
-  modalView: {
+  scrollContainer: {
     width: '95%',
+    marginTop: 3,
+  },
+  modalView: {
     backgroundColor: "#EEEE",
     borderRadius: 20,
     padding: 15,
@@ -177,14 +185,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-
+    minWidth: '100%',
+    maxWidth: '100%',
   },
   inputContainer: {
     marginVertical: 8,
   },
   label: {
     fontSize: 14,
-    marginBottom: 4,
+    marginBottom: 8,
   },
   textInput: {
     borderColor: "#222",
@@ -205,7 +214,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
-    height: 250,
+    height: 300,
     textAlign: 'left',
     textAlignVertical: 'top',
   },
@@ -231,6 +240,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 20,
   },
   inputGroup: {
     flexDirection: 'row', // 요소들을 가로로 나열

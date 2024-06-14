@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       borderWidth: 1,
       borderColor: '#ccc',
-      minWidth: 59,
+      minWidth: 57,
       padding: 10,
       justifyContent: 'center',  // Centers content vertically.
       alignItems: 'center',       // Centers content horizontally.

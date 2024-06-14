@@ -8,34 +8,34 @@ import { TextDecoder } from 'text-encoding';
 
 // Decoding function that replaces jwt-decode for React Native
 function decodeJWT(token) {
-    try {
-        const parts = token.split('.');
-        if (parts.length !== 3) {
-            throw new Error('Invalid token: The JWT must have three parts');
-        }
-
-        const header = JSON.parse(base64decode(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
-        //const payload = JSON.parse(base64decode(parts[1].replace(/-/g, '+').replace(/_/g, '/'))); //한글없이는 이렇게 사용가능
-        const payloadEncoded = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-        const payloadDecoded = base64decode(payloadEncoded);
-        
-        const decoder = new TextDecoder('utf-8');
-        const payloadUtf8 = decoder.decode(new Uint8Array(Array.from(payloadDecoded).map(char => char.charCodeAt(0))));
-        const payload = JSON.parse(payloadUtf8);
-
-        // const hasNullOrBlank = Object.values(payload).some(value => value === null || value === "");
-        // if (hasNullOrBlank === true) { // true가 출력되면 null이나 빈칸이 존재, false면 존재하지 않음
-        //   return 'retry';
-        // } 
-
-        //console.log("Decoded Header:", header);
-        console.log("Decoded Payload:", payload);
-
-        return { header, payload };
-    } catch (error) {
-        console.error("Failed to decode JWT:", error);
-        return null;
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid token: The JWT must have three parts');
     }
+
+    const header = JSON.parse(base64decode(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+    //const payload = JSON.parse(base64decode(parts[1].replace(/-/g, '+').replace(/_/g, '/'))); //한글없이는 이렇게 사용가능
+    const payloadEncoded = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const payloadDecoded = base64decode(payloadEncoded);
+
+    const decoder = new TextDecoder('utf-8');
+    const payloadUtf8 = decoder.decode(new Uint8Array(Array.from(payloadDecoded).map(char => char.charCodeAt(0))));
+    const payload = JSON.parse(payloadUtf8);
+
+    const hasNullOrBlank = Object.values(payload).some(value => value === null || value === "");
+    if (hasNullOrBlank === true) { // true가 출력되면 null이나 빈칸이 존재, false면 존재하지 않음
+      return 'retry';
+    }
+
+    //console.log("Decoded Header:", header);
+    //console.log("Decoded Payload:", payload);
+
+    return { header, payload };
+  } catch (error) {
+    console.error("Failed to decode JWT:", error);
+    return null;
+  }
 }
 
 
@@ -49,51 +49,51 @@ const api = axios.create({
 
 // 요청 인터셉터
 api.interceptors.request.use(
-    async (config) => {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (token) {
-        let decoded = decodeJWT(token);
-        if (!decoded) {
-          console.error("토큰 디코드 에러");
-          return config;
-        }
-        // r
-  
-        const currentTime = Date.now() / 1000;
-        const isTokenExpired = decoded.payload.exp < currentTime;
-  
-        if (!isTokenExpired) {
-          config.headers['Authorization'] = `Bearer ${token}`;
-          //console.log("헤더에 토큰 첨부됨");
+  async (config) => {
+    const token = await AsyncStorage.getItem('accessToken');
+    if (token) {
+      let decoded = decodeJWT(token);
+      if (!decoded) {
+        console.error("토큰 디코드 에러");
+        return config;
+      }
+      // r
+
+      const currentTime = Date.now() / 1000;
+      const isTokenExpired = decoded.payload.exp < currentTime;
+
+      if (!isTokenExpired) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+        //console.log("헤더에 토큰 첨부됨");
+      } else {
+        console.log("토큰이 만료됨 69");
+        const newToken = await refreshTokenAndRetryRequest(config);
+        if (newToken) {
+          config.headers['Authorization'] = `Bearer ${newToken}`;
+          console.log("Header updated with new token");
         } else {
-          console.log("토큰이 만료됨 69");
-          const newToken = await refreshTokenAndRetryRequest(config);
-          if (newToken) {
-              config.headers['Authorization'] = `Bearer ${newToken}`;
-              console.log("Header updated with new token");
-          } else {
-              console.log("Token update failed");
-              // Processing logic if token renewal fails
-              // Example: Redirect to login screen
-          }
+          console.log("Token update failed");
+          // Processing logic if token renewal fails
+          // Example: Redirect to login screen
         }
       }
-      return config;
-    },
-    error => Promise.reject(error)
-  );
-  
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
 
 // 토큰 만료로 인해 403 에러가 발생했을 때 자동으로 토큰을 새로 고치고 요청을 재시도하기 위한 응답 인터셉터 추가
-api.interceptors.response.use( response => response, // 에러가 없는 모든 응답을 통과시킴
+api.interceptors.response.use(response => response, // 에러가 없는 모든 응답을 통과시킴
   async (error) => {
     console.log("오류 발생 74");
     const originalRequest = error.config;
     //console.log("오류 발생 76",originalRequest);
     console.log("오류 발생 77");
-    console.log("오류 발생 79 status =  ",  error.response.status, originalRequest._retry);
+    console.log("오류 발생 79 status =  ", error.response.status, originalRequest._retry);
     if (error.response.status === 403 && !originalRequest._retry) { // 에러가 만료된 토큰 때문이고 요청이 재시도되지 않았다면
-        console.log("오류 발생 71");
+      console.log("오류 발생 71");
       originalRequest._retry = true; // 이 요청을 재시도된 것으로 표시
       console.log("api.interceptors.response.use 28 403 오류");
       return refreshTokenAndRetryRequest(originalRequest); // 토큰을 새로 고치고 원래 요청을 다시 시도하는 함수를 호출
@@ -111,7 +111,7 @@ async function refreshTokenAndRetryRequest(originalRequest) {
     console.log("refreshTokenAndRetryRequest 92 재발급");
     const refreshToken = await AsyncStorage.getItem('refreshToken'); // 저장소에서 리프레시 토큰을 검색
     const { data } = await axios.post(`${api.defaults.baseURL}/refresh`, { refreshToken }); // 리프레시 토큰을 사용해 액세스 토큰을 새로 고침
-    console.log("refreshToken 96",data);
+    console.log("refreshToken 96", data);
     const { accessToken } = data; // 응답에서 새 액세스 토큰 추출
     await AsyncStorage.setItem('accessToken', accessToken); // 새 액세스 토큰을 AsyncStorage에 저장
     api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`; // Axios 기본 Authorization 헤더를 업데이트

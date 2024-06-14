@@ -61,4 +61,8 @@ Android Bundling failed 오류시
 npm install expo-constants
 
 npx create-expo-app --template
+
+24.05.31 키보드가 입력필드 가림
+npm install react-native-keyboard-aware-scroll-view
+
 blank
